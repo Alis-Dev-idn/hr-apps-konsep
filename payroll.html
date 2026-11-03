@@ -108,18 +108,18 @@
         </div>
       </div>
 
-      <!-- DESKTOP TABLE VIEW PAYROLL (>= 768px) -->
-      <div class="hidden md:block bg-white rounded-3xl border border-[#D5E7DC] shadow-xs overflow-hidden">
-        <table class="w-full text-left border-collapse text-xs sm:text-sm">
+      <!-- TABLE VIEW PAYROLL (DESKTOP & TABLET >= 768px) -->
+      <div class="hidden md:block bg-white rounded-3xl border border-[#D5E7DC] shadow-xs overflow-x-auto">
+        <table class="w-full min-w-[760px] text-left border-collapse text-xs sm:text-sm">
           <thead>
-            <tr class="border-b border-[#D5E7DC] bg-[#F4F9F5] text-[#567364] font-bold uppercase text-[11px] tracking-wider">
-              <th class="py-4 px-5">Karyawan</th>
-              <th class="py-4 px-4">Gaji Pokok</th>
-              <th class="py-4 px-4">Tunjangan</th>
-              <th class="py-4 px-4">Potongan</th>
-              <th class="py-4 px-4">Penerimaan Bersih (THP)</th>
-              <th class="py-4 px-4">Status Slip</th>
-              <th class="py-4 px-5 text-right">Aksi Manajemen</th>
+            <tr class="border-b border-[#D5E7DC] bg-[#F4F9F5] text-[#567364] font-bold uppercase text-[11px] tracking-wider whitespace-nowrap">
+              <th class="py-4 px-4 sm:px-5">Karyawan</th>
+              <th class="py-4 px-3 sm:px-4">Gaji Pokok</th>
+              <th class="py-4 px-3 sm:px-4">Tunjangan</th>
+              <th class="py-4 px-3 sm:px-4">Potongan</th>
+              <th class="py-4 px-3 sm:px-4">Penerimaan Bersih (THP)</th>
+              <th class="py-4 px-3 sm:px-4">Status Slip</th>
+              <th class="py-4 px-4 sm:px-5 text-right">Aksi</th>
             </tr>
           </thead>
           <tbody id="payroll-table-body" class="divide-y divide-[#E8F4EC] text-[#334D40]">
@@ -322,6 +322,21 @@
       }
     }
 
+    // 0. DISPATCHER MENU SELECT AKSI PAYROLL (TERBIT, EDIT, PREVIEW)
+    window.handlePayrollAction = function(selectEl, empId, empNama) {
+      const action = selectEl.value;
+      selectEl.value = ''; // Reset select setelah dipilih
+      if (!action) return;
+
+      if (action === 'publish') {
+        publishSinglePayroll(empId, empNama);
+      } else if (action === 'edit') {
+        openEditDeductionsModal(empId);
+      } else if (action === 'preview') {
+        openPayslipModalById(empId, 'Oktober 2026');
+      }
+    };
+
     // 1. TERBITKAN PAYROLL PER USER
     window.publishSinglePayroll = function(empId, empNama) {
       if (isPayrollLocked()) {
@@ -389,20 +404,20 @@
 
         return `
           <tr class="hover:bg-[#F4F9F5] transition-colors">
-            <td class="py-3.5 px-5">
-              <a href="detail-pegawai.html?id=${emp.id}" class="font-bold text-[#13231B] hover:text-[#0D6840]">
+            <td class="py-3.5 px-4 sm:px-5">
+              <a href="detail-pegawai.html?id=${emp.id}" class="font-bold text-[#13231B] hover:text-[#0D6840] whitespace-nowrap">
                 ${emp.nama}
               </a>
-              <span class="block text-xs text-[#567364] font-mono">${emp.id} &bull; ${emp.jabatan}</span>
+              <span class="block text-xs text-[#567364] font-mono whitespace-nowrap">${emp.id} &bull; ${emp.jabatan}</span>
             </td>
-            <td class="py-3.5 px-4 font-mono font-medium">Rp ${pokok.toLocaleString('id-ID')}</td>
-            <td class="py-3.5 px-4 font-mono text-[#0D6840] font-semibold">+Rp ${tunjangan.toLocaleString('id-ID')}</td>
-            <td class="py-3.5 px-4 font-mono text-rose-500 font-medium">
+            <td class="py-3.5 px-3 sm:px-4 font-mono font-medium whitespace-nowrap">Rp ${pokok.toLocaleString('id-ID')}</td>
+            <td class="py-3.5 px-3 sm:px-4 font-mono text-[#0D6840] font-semibold whitespace-nowrap">+Rp ${tunjangan.toLocaleString('id-ID')}</td>
+            <td class="py-3.5 px-3 sm:px-4 font-mono text-rose-500 font-medium whitespace-nowrap">
               -Rp ${potongan.toLocaleString('id-ID')}
               ${custom ? '<span class="text-[10px] text-amber-600 block font-sans font-semibold">(kustom)</span>' : ''}
             </td>
-            <td class="py-3.5 px-4 font-mono font-black text-[#0D6840]">Rp ${thp.toLocaleString('id-ID')}</td>
-            <td class="py-3.5 px-4">
+            <td class="py-3.5 px-3 sm:px-4 font-mono font-black text-[#0D6840] whitespace-nowrap">Rp ${thp.toLocaleString('id-ID')}</td>
+            <td class="py-3.5 px-3 sm:px-4 whitespace-nowrap">
               <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
                 isPublished 
                   ? 'bg-[#DDF2E4] text-[#0D6840] border border-[#0D6840]/20' 
@@ -411,30 +426,13 @@
                 ${isPublished ? '● Diterbitkan' : 'Draft'}
               </span>
             </td>
-            <td class="py-3.5 px-5 text-right">
-              <div class="flex items-center justify-end gap-2">
-                <!-- Tombol Edit Potongan -->
-                <button type="button" onclick="openEditDeductionsModal('${emp.id}')" class="px-2.5 py-1.5 bg-[#F4F9F5] hover:bg-[#E8F4EC] text-[#13231B] border border-[#D5E7DC] rounded-xl text-xs font-bold inline-flex items-center gap-1 transition-colors cursor-pointer">
-                  <svg class="w-3.5 h-3.5 text-[#567364]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                  </svg>
-                  <span>Edit Potongan</span>
-                </button>
-
-                <!-- Tombol Terbitkan Per User -->
-                ${!isPublished ? `
-                  <button type="button" onclick="publishSinglePayroll('${emp.id}', '${emp.nama}')" class="px-2.5 py-1.5 bg-[#0D6840] hover:bg-[#094F30] text-white rounded-xl text-xs font-bold transition-colors shadow-2xs cursor-pointer">
-                    Terbitkan
-                  </button>
-                ` : `
-                  <button type="button" onclick="openPayslipModalById('${emp.id}', 'Oktober 2026')" class="px-2.5 py-1.5 bg-[#E8F4EC] hover:bg-[#DDF2E4] text-[#0D6840] rounded-xl text-xs font-bold inline-flex items-center gap-1 transition-colors border border-[#D5E7DC] cursor-pointer">
-                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                    </svg>
-                    <span>Slip (A4)</span>
-                  </button>
-                `}
-              </div>
+            <td class="py-3.5 px-4 sm:px-5 text-right whitespace-nowrap">
+              <select onchange="handlePayrollAction(this, '${emp.id}', '${emp.nama}')" class="px-2.5 py-1.5 bg-[#F4F9F5] hover:bg-[#E8F4EC] text-[#13231B] border border-[#D5E7DC] rounded-xl text-xs font-bold transition-colors cursor-pointer focus:outline-none focus:border-[#0D6840] shadow-2xs">
+                <option value="" disabled selected>Pilih Aksi ▾</option>
+                <option value="publish" ${locked ? 'disabled' : ''}>${isPublished ? '✓ Terbitkan Ulang' : '⚡ Terbitkan'}</option>
+                <option value="edit" ${locked ? 'disabled' : ''}>✏️ Edit Potongan</option>
+                <option value="preview">📄 Pratinjau Slip (A4)</option>
+              </select>
             </td>
           </tr>
         `;
@@ -484,21 +482,13 @@
             </div>
 
             <div class="pt-2 border-t border-[#E8F4EC] flex items-center justify-between gap-2">
-              <button type="button" onclick="openEditDeductionsModal('${emp.id}')" class="px-3 py-1.5 bg-[#F4F9F5] text-[#13231B] border border-[#D5E7DC] rounded-xl text-xs font-bold cursor-pointer">
-                Edit Potongan
-              </button>
-              
-              <div class="flex items-center gap-1.5">
-                ${!isPublished ? `
-                  <button type="button" onclick="publishSinglePayroll('${emp.id}', '${emp.nama}')" class="px-3 py-1.5 bg-[#0D6840] text-white rounded-xl text-xs font-bold cursor-pointer">
-                    Terbitkan Slip
-                  </button>
-                ` : `
-                  <button type="button" onclick="openPayslipModalById('${emp.id}', 'Oktober 2026')" class="px-3 py-1.5 bg-[#E8F4EC] text-[#0D6840] rounded-xl text-xs font-bold border border-[#D5E7DC] cursor-pointer">
-                    Lihat Slip (A4)
-                  </button>
-                `}
-              </div>
+              <span class="text-xs font-bold text-[#567364]">Aksi Penggajian:</span>
+              <select onchange="handlePayrollAction(this, '${emp.id}', '${emp.nama}')" class="px-3 py-1.5 bg-[#F4F9F5] hover:bg-[#E8F4EC] text-[#13231B] border border-[#D5E7DC] rounded-xl text-xs font-bold transition-colors cursor-pointer focus:outline-none focus:border-[#0D6840] shadow-2xs">
+                <option value="" disabled selected>Pilih Aksi ▾</option>
+                <option value="publish" ${locked ? 'disabled' : ''}>${isPublished ? '✓ Terbitkan Ulang' : '⚡ Terbitkan'}</option>
+                <option value="edit" ${locked ? 'disabled' : ''}>✏️ Edit Potongan</option>
+                <option value="preview">📄 Pratinjau Slip (A4)</option>
+              </select>
             </div>
           </div>
         `;
