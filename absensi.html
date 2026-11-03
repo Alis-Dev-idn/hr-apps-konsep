@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Presensi Karyawan - Upajiwa Enterprise</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#E8F4EC] text-[#334D40] min-h-screen flex">
+
+  <!-- Mobile Drawer Container -->
+  <div id="mobile-drawer"></div>
+
+  <!-- Desktop Floating Sidebar (Deep Emerald #0D6840) -->
+  <aside id="desktop-sidebar" class="hidden md:block w-64 flex-shrink-0 min-h-screen sticky top-0"></aside>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col min-w-0 min-h-screen">
+    <!-- Topbar (Floating Emerald Bar) -->
+    <header id="topbar"></header>
+
+    <!-- Page Content Container -->
+    <main class="flex-1 px-4 sm:px-6 lg:px-8 py-6 max-w-7xl w-full mx-auto space-y-6">
+
+      <!-- ============================================== -->
+      <!-- ADMIN VIEW: INPUT ABSENSI HARIAN PEGAWAI       -->
+      <!-- ============================================== -->
+      <div id="admin-absensi-container" class="space-y-6">
+        <!-- Header Admin -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 class="font-heading font-black text-2xl sm:text-3xl text-[#13231B] tracking-tight">Input Absensi Harian Karyawan</h1>
+            <p class="text-xs sm:text-sm text-[#567364] mt-1">Kelola dan catat status kehadiran seluruh staf secara kolektif untuk periode berjalan.</p>
+          </div>
+
+          <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+            <button onclick="openImportCsvAbsensiModal()" class="px-3.5 py-2.5 bg-white hover:bg-[#DDF2E4] text-[#0D6840] text-xs sm:text-sm font-bold rounded-2xl flex items-center gap-2 transition-colors border border-[#D5E7DC] shadow-xs">
+              <svg class="w-4 h-4 text-[#0D6840]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+              </svg>
+              <span>Import CSV Presensi</span>
+            </button>
+
+            <button onclick="saveAllAttendance()" class="px-4 py-2.5 bg-[#0D6840] hover:bg-[#094F30] text-white text-xs sm:text-sm font-bold rounded-2xl flex items-center gap-2 transition-all shadow-md shadow-[#0D6840]/20">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+              </svg>
+              <span>Simpan Presensi Hari Ini</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter & Date Selector -->
+        <div class="bg-white p-4 sm:p-5 rounded-3xl border border-[#D5E7DC] shadow-xs flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+          <div class="flex items-center gap-3">
+            <label class="text-xs font-bold text-[#13231B] whitespace-nowrap">Tanggal Catat:</label>
+            <input type="date" id="admin-absensi-date" value="2026-10-28" class="px-3 py-1.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-xs sm:text-sm text-[#13231B] font-bold focus:outline-none focus:border-[#0D6840]">
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button onclick="markAllStatus('Hadir')" class="px-3 py-1.5 text-xs font-bold rounded-xl bg-[#DDF2E4] text-[#0D6840] hover:bg-emerald-200 transition-colors border border-[#0D6840]/20">
+              Set Semua Hadir
+            </button>
+            <span class="text-xs text-[#567364] font-bold ml-2" id="admin-emp-count-badge">20 Pegawai</span>
+          </div>
+        </div>
+
+        <!-- DESKTOP TABLE VIEW: ADMIN INPUT ABSENSI (>= 768px) -->
+        <div class="hidden md:block bg-white rounded-3xl border border-[#D5E7DC] shadow-xs overflow-hidden">
+          <table class="w-full text-left border-collapse text-xs sm:text-sm">
+            <thead>
+              <tr class="border-b border-[#D5E7DC] bg-[#F4F9F5] text-[#567364] font-bold uppercase text-[11px] tracking-wider">
+                <th class="py-4 px-5">Karyawan</th>
+                <th class="py-4 px-4">NIP</th>
+                <th class="py-4 px-4">Departemen</th>
+                <th class="py-4 px-4">Status Presensi</th>
+                <th class="py-4 px-4">Jam Masuk</th>
+                <th class="py-4 px-4">Jam Pulang</th>
+                <th class="py-4 px-5">Keterangan</th>
+              </tr>
+            </thead>
+            <tbody id="admin-absensi-tbody" class="divide-y divide-[#E8F4EC] text-[#334D40]">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- MOBILE CARD LIST VIEW: ADMIN INPUT ABSENSI (< 768px) -->
+        <div id="admin-absensi-card-list" class="block md:hidden space-y-3">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- ======================================================= -->
+      <!-- EMPLOYEE VIEW: RIWAYAT PRESENSI SAYA (LOG KELUAR-MASUK) -->
+      <!-- ======================================================= -->
+      <div id="employee-absensi-container" class="space-y-6 hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 class="font-heading font-black text-2xl sm:text-3xl text-[#13231B] tracking-tight">Riwayat Presensi Saya</h1>
+            <p class="text-xs sm:text-sm text-[#567364] mt-1">Daftar rekam jejak jam keluar-masuk, lokasi scan presensi, dan status kehadiran Anda.</p>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <div class="px-4 py-2 bg-white rounded-2xl border border-[#D5E7DC] text-xs shadow-xs">
+              <span class="text-[#567364] block text-[10px]">Kehadiran Bulan Ini:</span>
+              <span class="font-bold text-[#0D6840]">22 / 22 Hari (100%)</span>
+            </div>
+            <div class="px-4 py-2 bg-white rounded-2xl border border-[#D5E7DC] text-xs shadow-xs">
+              <span class="text-[#567364] block text-[10px]">Sisa Kuota Cuti:</span>
+              <span class="font-bold text-[#D97706]">9 Hari</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter Periode Karyawan -->
+        <div class="bg-white p-4 sm:p-5 rounded-3xl border border-[#D5E7DC] shadow-xs flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-bold text-[#13231B]">Pilih Periode:</span>
+            <select class="px-3 py-1.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-xs sm:text-sm font-bold text-[#13231B]">
+              <option value="2026-10">Oktober 2026 (Bulan Berjalan)</option>
+              <option value="2026-09">September 2026</option>
+              <option value="2026-08">Agustus 2026</option>
+            </select>
+          </div>
+          <span class="text-xs text-[#567364] font-medium">Total: 22 Hari Kerja Efektif</span>
+        </div>
+
+        <!-- DESKTOP TABLE VIEW: RIWAYAT KELUAR MASUK PEGAWAI (>= 768px) -->
+        <div class="hidden md:block bg-white rounded-3xl border border-[#D5E7DC] shadow-xs overflow-hidden">
+          <table class="w-full text-left border-collapse text-xs sm:text-sm">
+            <thead>
+              <tr class="border-b border-[#D5E7DC] bg-[#F4F9F5] text-[#567364] font-bold uppercase text-[11px] tracking-wider">
+                <th class="py-4 px-5">Hari & Tanggal</th>
+                <th class="py-4 px-4">Jam Masuk</th>
+                <th class="py-4 px-4">Jam Pulang</th>
+                <th class="py-4 px-4">Lokasi Presensi</th>
+                <th class="py-4 px-4">Durasi Kerja</th>
+                <th class="py-4 px-5 text-right">Status Kehadiran</th>
+              </tr>
+            </thead>
+            <tbody id="employee-log-tbody" class="divide-y divide-[#E8F4EC] text-[#334D40]">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- MOBILE CARD LIST VIEW (< 768px) -->
+        <div id="employee-log-card-list" class="block md:hidden space-y-3">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Modal Import CSV Presensi Admin -->
+  <div id="modal-import-csv-absensi" class="fixed inset-0 bg-[#13231B]/70 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-[#D5E7DC]">
+      <div class="flex items-center justify-between pb-3 border-b border-[#D5E7DC] mb-4">
+        <h3 class="font-heading font-black text-lg text-[#13231B]">Import Presensi Karyawan dari Mesin / CSV</h3>
+        <button onclick="closeImportCsvAbsensiModal()" class="text-[#567364] hover:text-[#13231B]">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="space-y-4 text-xs sm:text-sm">
+        <div class="p-3 bg-[#E8F4EC] border border-[#D5E7DC] rounded-2xl text-[#334D40]">
+          <p class="font-bold text-[#0D6840] mb-1">Format Header CSV Presensi Mesin Fingerprint / RFID:</p>
+          <code class="font-mono text-[11px] block text-[#0D6840]">nip,tanggal,jam_masuk,jam_pulang,status,lokasi</code>
+        </div>
+
+        <div class="border-2 border-dashed border-[#D5E7DC] hover:border-[#0D6840] rounded-3xl p-6 text-center bg-[#F4F9F5] transition-colors">
+          <svg class="w-10 h-10 text-[#567364] mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+          </svg>
+          <label class="cursor-pointer">
+            <span class="text-xs sm:text-sm font-bold text-[#0D6840] hover:underline">Pilih berkas CSV Presensi</span>
+            <input type="file" id="csv-absensi-input" accept=".csv" class="hidden" onchange="handleCsvAbsensi(this)">
+          </label>
+          <p class="text-[11px] text-[#567364] mt-1" id="csv-absensi-filename">Maksimal 5MB, format CSV UTF-8</p>
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2">
+          <button onclick="closeImportCsvAbsensiModal()" class="px-4 py-2 border border-[#D5E7DC] rounded-xl hover:bg-[#E8F4EC] text-[#334D40] font-semibold">Batal</button>
+          <button id="btn-import-absensi" onclick="executeImportAbsensi()" disabled class="px-4 py-2 bg-[#0D6840] hover:bg-[#094F30] disabled:opacity-50 text-white rounded-xl font-bold shadow-md">Impor Log Presensi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="mock-data.js"></script>
+  <script src="layout.js"></script>
+  <script>
+    let employees = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initAppShell('absensi');
+      employees = getLocalEmployees();
+
+      const currentRole = getActiveRole();
+      if (currentRole === 'employee') {
+        document.getElementById('admin-absensi-container').classList.add('hidden');
+        document.getElementById('employee-absensi-container').classList.remove('hidden');
+        renderEmployeePresensiLog();
+      } else {
+        document.getElementById('admin-absensi-container').classList.remove('hidden');
+        document.getElementById('employee-absensi-container').classList.add('hidden');
+        renderAdminAttendanceTable(employees);
+      }
+    });
+
+    function renderAdminAttendanceTable(list) {
+      const tbody = document.getElementById('admin-absensi-tbody');
+      const cardList = document.getElementById('admin-absensi-card-list');
+      document.getElementById('admin-emp-count-badge').textContent = `${list.length} Pegawai Terdaftar`;
+
+      tbody.innerHTML = list.map((emp, idx) => {
+        const isAbsent = idx === 4 || idx === 11;
+        const defaultStatus = isAbsent ? (idx === 4 ? 'Sakit' : 'Cuti') : 'Hadir';
+        const inTime = isAbsent ? '--:--' : (idx % 5 === 0 ? '08:48' : '08:15');
+        const outTime = isAbsent ? '--:--' : '17:05';
+
+        return `
+          <tr class="hover:bg-[#F4F9F5] transition-colors">
+            <td class="py-3.5 px-5 font-bold text-[#13231B]">
+              ${emp.nama}
+              <span class="block text-[11px] font-normal text-[#567364]">${emp.jabatan}</span>
+            </td>
+            <td class="py-3.5 px-4 font-mono text-xs text-[#567364]">${emp.id}</td>
+            <td class="py-3.5 px-4 text-xs">${emp.departemen}</td>
+            <td class="py-3.5 px-4">
+              <select class="status-select px-3 py-1 bg-white border border-[#D5E7DC] rounded-xl text-xs font-bold text-[#13231B] focus:outline-none focus:border-[#0D6840]">
+                <option value="Hadir" ${defaultStatus === 'Hadir' ? 'selected' : ''}>Hadir</option>
+                <option value="Izin" ${defaultStatus === 'Izin' ? 'selected' : ''}>Izin</option>
+                <option value="Sakit" ${defaultStatus === 'Sakit' ? 'selected' : ''}>Sakit</option>
+                <option value="Cuti" ${defaultStatus === 'Cuti' ? 'selected' : ''}>Cuti</option>
+                <option value="Alpha" ${defaultStatus === 'Alpha' ? 'selected' : ''}>Alpha</option>
+              </select>
+            </td>
+            <td class="py-3.5 px-4 font-mono text-xs">
+              <input type="text" value="${inTime}" class="w-16 px-2 py-1 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-center text-[#13231B] font-bold">
+            </td>
+            <td class="py-3.5 px-4 font-mono text-xs">
+              <input type="text" value="${outTime}" class="w-16 px-2 py-1 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-center text-[#13231B] font-bold">
+            </td>
+            <td class="py-3.5 px-5 text-xs">
+              <input type="text" placeholder="Catatan opsional..." class="w-full px-2.5 py-1 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-[#334D40]">
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      cardList.innerHTML = list.map((emp, idx) => {
+        const isAbsent = idx === 4 || idx === 11;
+        const defaultStatus = isAbsent ? (idx === 4 ? 'Sakit' : 'Cuti') : 'Hadir';
+
+        return `
+          <div class="bg-white p-5 rounded-3xl border border-[#D5E7DC] shadow-xs space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="font-heading font-bold text-sm text-[#13231B]">${emp.nama}</span>
+                <span class="block text-xs text-[#567364] font-mono">${emp.id} &bull; ${emp.departemen}</span>
+              </div>
+              <select class="status-select px-3 py-1 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-xs font-bold text-[#13231B]">
+                <option value="Hadir" ${defaultStatus === 'Hadir' ? 'selected' : ''}>Hadir</option>
+                <option value="Izin" ${defaultStatus === 'Izin' ? 'selected' : ''}>Izin</option>
+                <option value="Sakit" ${defaultStatus === 'Sakit' ? 'selected' : ''}>Sakit</option>
+                <option value="Cuti" ${defaultStatus === 'Cuti' ? 'selected' : ''}>Cuti</option>
+                <option value="Alpha" ${defaultStatus === 'Alpha' ? 'selected' : ''}>Alpha</option>
+              </select>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div>
+                <label class="text-[#567364] block text-[10px]">Jam Masuk</label>
+                <input type="text" value="${isAbsent ? '--:--' : '08:15'}" class="w-full px-2.5 py-1.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-center font-mono font-bold text-[#13231B]">
+              </div>
+              <div>
+                <label class="text-[#567364] block text-[10px]">Jam Pulang</label>
+                <input type="text" value="${isAbsent ? '--:--' : '17:05'}" class="w-full px-2.5 py-1.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-center font-mono font-bold text-[#13231B]">
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function markAllStatus(status) {
+      document.querySelectorAll('.status-select').forEach(sel => {
+        sel.value = status;
+      });
+      showToast(`Seluruh pegawai diset menjadi status: ${status}`, 'success');
+    }
+
+    function saveAllAttendance() {
+      showToast('Seluruh data presensi harian berhasil disimpan & disinkronkan ke payroll!', 'success');
+    }
+
+    function renderEmployeePresensiLog() {
+      const tbody = document.getElementById('employee-log-tbody');
+      const cardList = document.getElementById('employee-log-card-list');
+
+      const logData = [
+        { tgl: 'Rabu, 28 Okt 2026', in: '08:14', out: '17:15', lokasi: 'BEI Tower 2 Lt. 17 SCBD (WiFi Kantor)', durasi: '9 Jam 1 Menit', status: 'Tepat Waktu' },
+        { tgl: 'Selasa, 27 Okt 2026', in: '08:20', out: '17:02', lokasi: 'BEI Tower 2 Lt. 17 SCBD (WiFi Kantor)', durasi: '8 Jam 42 Menit', status: 'Tepat Waktu' },
+        { tgl: 'Senin, 26 Okt 2026', in: '08:05', out: '17:30', lokasi: 'BEI Tower 2 Lt. 17 SCBD (WiFi Kantor)', durasi: '9 Jam 25 Menit', status: 'Tepat Waktu' },
+        { tgl: 'Jumat, 23 Okt 2026', in: '08:18', out: '17:00', lokasi: 'WFH - Geolocation Verifikasi GPS', durasi: '8 Jam 42 Menit', status: 'WFH Disetujui' },
+        { tgl: 'Kamis, 22 Okt 2026', in: '08:35', out: '17:45', lokasi: 'BEI Tower 2 Lt. 17 SCBD (WiFi Kantor)', durasi: '9 Jam 10 Menit', status: 'Terlambat 5 Mnt' },
+        { tgl: 'Rabu, 21 Okt 2026', in: '08:12', out: '17:08', lokasi: 'BEI Tower 2 Lt. 17 SCBD (WiFi Kantor)', durasi: '8 Jam 56 Menit', status: 'Tepat Waktu' },
+        { tgl: 'Selasa, 20 Okt 2026', in: '08:15', out: '17:10', lokasi: 'BEI Tower 2 Lt. 17 SCBD (WiFi Kantor)', durasi: '8 Jam 55 Menit', status: 'Tepat Waktu' },
+        { tgl: 'Senin, 19 Okt 2026', in: '08:02', out: '17:05', lokasi: 'BEI Tower 2 Lt. 17 SCBD (WiFi Kantor)', durasi: '9 Jam 3 Menit', status: 'Tepat Waktu' }
+      ];
+
+      tbody.innerHTML = logData.map(item => `
+        <tr class="hover:bg-[#F4F9F5] transition-colors">
+          <td class="py-3.5 px-5 font-bold text-[#13231B]">${item.tgl}</td>
+          <td class="py-3.5 px-4 font-mono text-[#0D6840] font-bold">${item.in} WIB</td>
+          <td class="py-3.5 px-4 font-mono text-[#13231B] font-bold">${item.out} WIB</td>
+          <td class="py-3.5 px-4 text-xs text-[#567364]">${item.lokasi}</td>
+          <td class="py-3.5 px-4 font-mono text-xs">${item.durasi}</td>
+          <td class="py-3.5 px-5 text-right">
+            <span class="inline-block px-2.5 py-1 rounded-xl text-xs font-semibold ${
+              item.status.includes('Tepat') ? 'bg-[#DDF2E4] text-[#0D6840] border border-[#0D6840]/20' :
+              item.status.includes('Terlambat') ? 'bg-amber-50 text-[#D97706] border border-amber-200' :
+              'bg-blue-50 text-blue-700 border border-blue-200'
+            }">
+              ${item.status}
+            </span>
+          </td>
+        </tr>
+      `).join('');
+
+      cardList.innerHTML = logData.map(item => `
+        <div class="bg-white p-5 rounded-3xl border border-[#D5E7DC] shadow-xs space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-heading font-bold text-sm text-[#13231B]">${item.tgl}</span>
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+              item.status.includes('Tepat') ? 'bg-[#DDF2E4] text-[#0D6840]' :
+              item.status.includes('Terlambat') ? 'bg-amber-100 text-[#D97706]' :
+              'bg-blue-50 text-blue-700'
+            }">
+              ${item.status}
+            </span>
+          </div>
+          <div class="grid grid-cols-2 gap-2 text-xs text-[#567364] py-1">
+            <div>
+              <span class="text-[#567364] block text-[10px]">Jam Masuk:</span>
+              <span class="font-mono font-bold text-[#0D6840] text-sm">${item.in} WIB</span>
+            </div>
+            <div>
+              <span class="text-[#567364] block text-[10px]">Jam Pulang:</span>
+              <span class="font-mono font-bold text-[#13231B] text-sm">${item.out} WIB</span>
+            </div>
+          </div>
+          <div class="text-[11px] text-[#567364] border-t border-[#E8F4EC] pt-2 flex items-center justify-between">
+            <span>${item.lokasi}</span>
+            <span class="font-mono font-bold text-[#13231B]">${item.durasi}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openImportCsvAbsensiModal() {
+      document.getElementById('csv-absensi-filename').textContent = 'Maksimal 5MB, format CSV UTF-8';
+      document.getElementById('btn-import-absensi').disabled = true;
+      document.getElementById('modal-import-csv-absensi').classList.remove('hidden');
+    }
+
+    function closeImportCsvAbsensiModal() {
+      document.getElementById('modal-import-csv-absensi').classList.add('hidden');
+    }
+
+    function handleCsvAbsensi(input) {
+      if (input.files && input.files[0]) {
+        document.getElementById('csv-absensi-filename').textContent = `Berkas: ${input.files[0].name}`;
+        document.getElementById('btn-import-absensi').disabled = false;
+      }
+    }
+
+    function executeImportAbsensi() {
+      showToast('Log presensi CSV berhasil diproses dan dicocokkan dengan 20 data pegawai!', 'success');
+      closeImportCsvAbsensiModal();
+    }
+  </script>
+</body>
+</html>

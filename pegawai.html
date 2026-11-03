@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Karyawan - Upajiwa Enterprise</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#E8F4EC] text-[#334D40] min-h-screen flex">
+
+  <!-- Mobile Drawer Container -->
+  <div id="mobile-drawer"></div>
+
+  <!-- Desktop Floating Sidebar (Deep Emerald #0D6840) -->
+  <aside id="desktop-sidebar" class="hidden md:block w-64 flex-shrink-0 min-h-screen sticky top-0"></aside>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col min-w-0 min-h-screen">
+    <!-- Topbar (Floating Emerald Bar) -->
+    <header id="topbar"></header>
+
+    <!-- Page Content Container -->
+    <main class="flex-1 px-4 sm:px-6 lg:px-8 py-6 max-w-7xl w-full mx-auto space-y-6">
+
+      <!-- Header Section -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 class="font-heading font-black text-2xl sm:text-3xl text-[#13231B] tracking-tight">Data Karyawan</h1>
+          <p class="text-xs sm:text-sm text-[#567364] mt-1">Kelola direktori profil pegawai, struktur jabatan, dan rekam jejak kerja perusahaan.</p>
+        </div>
+
+        <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+          <!-- Button Import CSV -->
+          <button onclick="openImportCsvModal()" class="px-3.5 py-2.5 bg-white hover:bg-[#DDF2E4] text-[#0D6840] text-xs sm:text-sm font-bold rounded-2xl flex items-center gap-2 transition-colors border border-[#D5E7DC] shadow-xs">
+            <svg class="w-4 h-4 text-[#0D6840]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+            </svg>
+            <span>Import CSV</span>
+          </button>
+
+          <!-- Button Tambah Pegawai -->
+          <button onclick="openEmployeeModal()" class="px-4 py-2.5 bg-[#0D6840] hover:bg-[#094F30] text-white text-xs sm:text-sm font-bold rounded-2xl flex items-center gap-2 transition-all shadow-md shadow-[#0D6840]/20">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+            </svg>
+            <span>Tambah Pegawai</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Filter & Search Toolbar -->
+      <div class="bg-white p-4 sm:p-5 rounded-3xl border border-[#D5E7DC] shadow-xs flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+        <div class="relative flex-1 max-w-md">
+          <input type="text" id="search-input" oninput="filterEmployees()" placeholder="Cari nama, NIP, atau jabatan..." class="w-full pl-10 pr-4 py-2 bg-[#F4F9F5] border border-[#D5E7DC] rounded-2xl text-xs sm:text-sm text-[#13231B] placeholder-[#567364] focus:outline-none focus:border-[#0D6840]">
+          <svg class="w-4 h-4 text-[#567364] absolute left-3.5 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <select id="filter-dept" onchange="filterEmployees()" class="px-3 py-2 bg-[#F4F9F5] border border-[#D5E7DC] rounded-2xl text-xs sm:text-sm text-[#13231B] focus:outline-none focus:border-[#0D6840]">
+            <option value="">Semua Departemen</option>
+            <option value="Teknologi">Teknologi</option>
+            <option value="Finance & Accounting">Finance & Accounting</option>
+            <option value="Human Resources">Human Resources</option>
+            <option value="Marketing & Sales">Marketing & Sales</option>
+            <option value="Operasional">Operasional</option>
+          </select>
+
+          <span class="text-xs text-[#0D6840] font-bold px-3 py-1.5 bg-[#DDF2E4] rounded-xl whitespace-nowrap" id="emp-count-badge">Total: 20 Karyawan</span>
+        </div>
+      </div>
+
+      <!-- DESKTOP TABLE VIEW (>= 768px) -->
+      <div class="hidden md:block bg-white rounded-3xl border border-[#D5E7DC] shadow-xs overflow-hidden">
+        <table class="w-full text-left border-collapse text-xs sm:text-sm">
+          <thead>
+            <tr class="border-b border-[#D5E7DC] bg-[#F4F9F5] text-[#567364] font-bold uppercase text-[11px] tracking-wider">
+              <th class="py-4 px-5">Karyawan</th>
+              <th class="py-4 px-4">NIP</th>
+              <th class="py-4 px-4">Departemen</th>
+              <th class="py-4 px-4">Gaji Pokok</th>
+              <th class="py-4 px-4">Status</th>
+              <th class="py-4 px-5 text-right">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="employee-table-body" class="divide-y divide-[#E8F4EC] text-[#334D40]">
+            <!-- Rendered via JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- MOBILE CARD LIST VIEW (< 768px) -->
+      <div id="employee-card-list" class="block md:hidden space-y-3">
+        <!-- Rendered via JS -->
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Modal Form Tambah / Edit Pegawai -->
+  <div id="modal-employee" class="fixed inset-0 bg-[#13231B]/70 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-[#D5E7DC] my-8">
+      <div class="flex items-center justify-between pb-3 border-b border-[#D5E7DC] mb-4">
+        <h3 id="modal-employee-title" class="font-heading font-black text-lg text-[#13231B]">Tambah Pegawai Baru</h3>
+        <button onclick="closeEmployeeModal()" class="text-[#567364] hover:text-[#13231B]">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form id="form-employee" onsubmit="handleEmployeeSubmit(event)" class="space-y-4 text-xs sm:text-sm">
+        <input type="hidden" id="emp-edit-id">
+        <div>
+          <label class="block font-bold text-[#13231B] mb-1">Nama Lengkap</label>
+          <input type="text" id="emp-name" required class="w-full px-3.5 py-2.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-[#13231B] focus:outline-none focus:border-[#0D6840]">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-[#13231B] mb-1">NIP (Nomor Induk)</label>
+            <input type="text" id="emp-id" placeholder="UP-021" required class="w-full px-3.5 py-2.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-[#13231B] focus:outline-none focus:border-[#0D6840]">
+          </div>
+          <div>
+            <label class="block font-bold text-[#13231B] mb-1">Departemen</label>
+            <select id="emp-dept" required class="w-full px-3.5 py-2.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-[#13231B] focus:outline-none focus:border-[#0D6840]">
+              <option value="Teknologi">Teknologi</option>
+              <option value="Finance & Accounting">Finance & Accounting</option>
+              <option value="Human Resources">Human Resources</option>
+              <option value="Marketing & Sales">Marketing & Sales</option>
+              <option value="Operasional">Operasional</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-[#13231B] mb-1">Jabatan</label>
+            <input type="text" id="emp-role" required class="w-full px-3.5 py-2.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-[#13231B] focus:outline-none focus:border-[#0D6840]">
+          </div>
+          <div>
+            <label class="block font-bold text-[#13231B] mb-1">Gaji Pokok (Rp)</label>
+            <input type="number" id="emp-salary" required min="1000000" step="500000" value="10000000" class="w-full px-3.5 py-2.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-[#13231B] focus:outline-none focus:border-[#0D6840] font-mono">
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-[#13231B] mb-1">Email Perusahaan</label>
+          <input type="email" id="emp-email" required class="w-full px-3.5 py-2.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-[#13231B] focus:outline-none focus:border-[#0D6840]">
+        </div>
+
+        <div class="pt-4 border-t border-[#D5E7DC] flex justify-end gap-2">
+          <button type="button" onclick="closeEmployeeModal()" class="px-4 py-2 border border-[#D5E7DC] rounded-xl text-[#334D40] hover:bg-[#E8F4EC] font-semibold">Batal</button>
+          <button type="submit" class="px-4 py-2 bg-[#0D6840] hover:bg-[#094F30] text-white rounded-xl font-bold shadow-md">Simpan Pegawai</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Integrasi Import CSV -->
+  <div id="modal-import-csv" class="fixed inset-0 bg-[#13231B]/70 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-[#D5E7DC]">
+      <div class="flex items-center justify-between pb-3 border-b border-[#D5E7DC] mb-4">
+        <h3 class="font-heading font-black text-lg text-[#13231B]">Import Data Pegawai dari File CSV</h3>
+        <button onclick="closeImportCsvModal()" class="text-[#567364] hover:text-[#13231B]">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        <div class="p-3 bg-[#E8F4EC] border border-[#D5E7DC] rounded-2xl text-xs text-[#334D40]">
+          <p class="font-bold text-[#0D6840] mb-1">Format Header CSV yang Didukung:</p>
+          <code class="font-mono text-[11px] block text-[#0D6840]">id,nama,jabatan,departemen,gajiPokok,tunjangan,potongan</code>
+          <p class="mt-2 text-[11px] text-[#567364]">Contoh template: <a href="template-pegawai-upajiwa.csv" download class="underline font-bold text-[#0D6840]">template-pegawai-upajiwa.csv</a></p>
+        </div>
+
+        <div class="border-2 border-dashed border-[#D5E7DC] hover:border-[#0D6840] rounded-3xl p-6 text-center bg-[#F4F9F5] transition-colors">
+          <svg class="w-10 h-10 text-[#567364] mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+          </svg>
+          <label class="cursor-pointer">
+            <span class="text-xs sm:text-sm font-bold text-[#0D6840] hover:underline">Pilih berkas CSV</span>
+            <span class="text-xs text-[#567364]"> atau seret ke sini</span>
+            <input type="file" id="csv-file-input" accept=".csv" class="hidden" onchange="handleCsvFile(this)">
+          </label>
+          <p class="text-[11px] text-[#567364] mt-1" id="csv-file-name">Maksimal 5MB, format CSV UTF-8</p>
+        </div>
+
+        <div id="csv-preview-container" class="hidden text-xs bg-[#F4F9F5] p-3 rounded-2xl border border-[#D5E7DC]">
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-bold text-[#13231B]" id="csv-preview-title">Pratinjau Data:</span>
+            <span class="text-[#0D6840] font-bold" id="csv-preview-count">0 baris ditemukan</span>
+          </div>
+          <p class="text-[11px] text-[#567364]">Data valid dan siap diimpor ke sistem Upajiwa.</p>
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2">
+          <button onclick="closeImportCsvModal()" class="px-4 py-2 border border-[#D5E7DC] rounded-xl hover:bg-[#E8F4EC] text-[#334D40] text-xs sm:text-sm font-semibold">Tutup</button>
+          <button id="btn-do-import" onclick="executeCsvImport()" disabled class="px-4 py-2 bg-[#0D6840] hover:bg-[#094F30] disabled:opacity-50 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md">Impor Sekarang</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="mock-data.js"></script>
+  <script src="layout.js"></script>
+  <script>
+    let employeesData = [];
+    let parsedCsvRows = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initAppShell('pegawai');
+      employeesData = getLocalEmployees();
+      renderEmployees(employeesData);
+    });
+
+    function renderEmployees(list) {
+      const tbody = document.getElementById('employee-table-body');
+      const cardList = document.getElementById('employee-card-list');
+      const badge = document.getElementById('emp-count-badge');
+      
+      badge.textContent = `Total: ${list.length} Karyawan`;
+
+      // Render Desktop Table Rows
+      tbody.innerHTML = list.map(emp => `
+        <tr class="hover:bg-[#F4F9F5] transition-colors">
+          <td class="py-3.5 px-5">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-2xl bg-[#0D6840] text-white font-bold text-xs flex items-center justify-center flex-shrink-0 shadow-2xs">
+                ${emp.nama.split(' ').map(n=>n[0]).join('').substring(0,2)}
+              </div>
+              <div>
+                <a href="detail-pegawai.html?id=${emp.id}" class="font-bold text-[#13231B] hover:text-[#0D6840] transition-colors">
+                  ${emp.nama}
+                </a>
+                <p class="text-xs text-[#567364]">${emp.jabatan}</p>
+              </div>
+            </div>
+          </td>
+          <td class="py-3.5 px-4 font-mono font-medium text-xs text-[#567364]">${emp.id}</td>
+          <td class="py-3.5 px-4">
+            <span class="inline-block px-2.5 py-1 rounded-xl text-xs font-semibold bg-[#E8F4EC] text-[#0D6840] border border-[#D5E7DC]">
+              ${emp.departemen}
+            </span>
+          </td>
+          <td class="py-3.5 px-4 font-mono font-bold text-[#13231B]">
+            Rp ${emp.gajiPokok.toLocaleString('id-ID')}
+          </td>
+          <td class="py-3.5 px-4">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#DDF2E4] text-[#0D6840] border border-[#0D6840]/20">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#0D6840]"></span> Aktif
+            </span>
+          </td>
+          <td class="py-3.5 px-5 text-right">
+            <div class="flex items-center justify-end gap-1.5">
+              <a href="detail-pegawai.html?id=${emp.id}" class="px-3 py-1.5 bg-[#E8F4EC] hover:bg-[#DDF2E4] text-[#0D6840] rounded-xl text-xs font-bold transition-colors border border-[#D5E7DC]" title="Buka Detail Penuh & Riwayat 12 Bulan">
+                Detail
+              </a>
+              <button onclick="editEmployee('${emp.id}')" class="p-1.5 text-[#567364] hover:text-[#D97706] rounded-xl hover:bg-[#E8F4EC]" title="Edit Data">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+              </button>
+              <button onclick="confirmDeleteEmployee('${emp.id}', '${emp.nama}')" class="p-1.5 text-[#567364] hover:text-rose-600 rounded-xl hover:bg-rose-50" title="Hapus Pegawai">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      // Render Mobile Card List View
+      cardList.innerHTML = list.map(emp => `
+        <div class="bg-white p-5 rounded-3xl border border-[#D5E7DC] shadow-xs space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-2xl bg-[#0D6840] text-white font-bold text-xs flex items-center justify-center flex-shrink-0">
+                ${emp.nama.split(' ').map(n=>n[0]).join('').substring(0,2)}
+              </div>
+              <div>
+                <a href="detail-pegawai.html?id=${emp.id}" class="font-heading font-bold text-sm text-[#13231B] hover:text-[#0D6840]">
+                  ${emp.nama}
+                </a>
+                <p class="text-xs text-[#567364] font-mono">${emp.id} &bull; ${emp.jabatan}</p>
+              </div>
+            </div>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#DDF2E4] text-[#0D6840]">
+              Aktif
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-[#E8F4EC] text-[#567364]">
+            <div>
+              <span class="text-[#567364] block text-[11px]">Departemen</span>
+              <span class="font-bold text-[#13231B]">${emp.departemen}</span>
+            </div>
+            <div>
+              <span class="text-[#567364] block text-[11px]">Gaji Pokok</span>
+              <span class="font-mono font-bold text-[#0D6840]">Rp ${emp.gajiPokok.toLocaleString('id-ID')}</span>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end gap-2 pt-2 border-t border-[#E8F4EC]">
+            <a href="detail-pegawai.html?id=${emp.id}" class="px-3.5 py-1.5 bg-[#E8F4EC] text-[#0D6840] text-xs font-bold rounded-xl flex items-center gap-1 border border-[#D5E7DC]">
+              <span>Buka Detail & Riwayat</span> &rarr;
+            </a>
+            <button onclick="editEmployee('${emp.id}')" class="p-1.5 border border-[#D5E7DC] rounded-xl text-[#567364]">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            </button>
+            <button onclick="confirmDeleteEmployee('${emp.id}', '${emp.nama}')" class="p-1.5 border border-[#D5E7DC] text-rose-500 rounded-xl hover:bg-rose-50">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterEmployees() {
+      const q = document.getElementById('search-input').value.toLowerCase();
+      const dept = document.getElementById('filter-dept').value;
+
+      const filtered = employeesData.filter(e => {
+        const matchQ = e.nama.toLowerCase().includes(q) || e.id.toLowerCase().includes(q) || e.jabatan.toLowerCase().includes(q);
+        const matchDept = dept === '' || e.departemen === dept;
+        return matchQ && matchDept;
+      });
+
+      renderEmployees(filtered);
+    }
+
+    function openEmployeeModal() {
+      document.getElementById('modal-employee-title').textContent = 'Tambah Pegawai Baru';
+      document.getElementById('emp-edit-id').value = '';
+      document.getElementById('emp-id').readOnly = false;
+      document.getElementById('form-employee').reset();
+      document.getElementById('emp-salary').value = '10000000';
+      document.getElementById('modal-employee').classList.remove('hidden');
+    }
+
+    function editEmployee(id) {
+      const emp = employeesData.find(e => e.id === id);
+      if (!emp) return;
+
+      document.getElementById('modal-employee-title').textContent = 'Ubah Data Pegawai';
+      document.getElementById('emp-edit-id').value = emp.id;
+      document.getElementById('emp-id').value = emp.id;
+      document.getElementById('emp-id').readOnly = true;
+      document.getElementById('emp-name').value = emp.nama;
+      document.getElementById('emp-dept').value = emp.departemen;
+      document.getElementById('emp-role').value = emp.jabatan;
+      document.getElementById('emp-salary').value = emp.gajiPokok;
+      document.getElementById('emp-email').value = `${emp.nama.toLowerCase().replace(/\s+/g, '.')}@pt-maju.co.id`;
+
+      document.getElementById('modal-employee').classList.remove('hidden');
+    }
+
+    function closeEmployeeModal() {
+      document.getElementById('modal-employee').classList.add('hidden');
+    }
+
+    function handleEmployeeSubmit(e) {
+      e.preventDefault();
+      const editId = document.getElementById('emp-edit-id').value;
+      const id = document.getElementById('emp-id').value.trim();
+      const nama = document.getElementById('emp-name').value.trim();
+      const departemen = document.getElementById('emp-dept').value;
+      const jabatan = document.getElementById('emp-role').value.trim();
+      const gajiPokok = parseInt(document.getElementById('emp-salary').value, 10);
+
+      if (editId) {
+        const index = employeesData.findIndex(item => item.id === editId);
+        if (index !== -1) {
+          employeesData[index] = { ...employeesData[index], nama, departemen, jabatan, gajiPokok };
+          showToast(`Data pegawai ${nama} berhasil diperbarui!`, 'success');
+        }
+      } else {
+        const newEmp = {
+          id: id || `UP-${String(employeesData.length + 1).padStart(3, '0')}`,
+          nama,
+          departemen,
+          jabatan,
+          gajiPokok,
+          tunjangan: Math.round(gajiPokok * 0.2),
+          potongan: Math.round(gajiPokok * 0.03)
+        };
+        employeesData.unshift(newEmp);
+        showToast(`Pegawai ${nama} berhasil ditambahkan!`, 'success');
+      }
+
+      saveLocalEmployees(employeesData);
+      renderEmployees(employeesData);
+      closeEmployeeModal();
+    }
+
+    function confirmDeleteEmployee(id, name) {
+      showConfirmDialog(
+        'Hapus Data Pegawai?',
+        `Apakah Anda yakin ingin menghapus data pegawai "${name}" (${id})? Tindakan ini tidak dapat dibatalkan.`,
+        'Ya, Hapus Pegawai',
+        true,
+        () => {
+          employeesData = employeesData.filter(e => e.id !== id);
+          saveLocalEmployees(employeesData);
+          renderEmployees(employeesData);
+          showToast(`Pegawai ${name} berhasil dihapus dari sistem.`, 'success');
+        }
+      );
+    }
+
+    function openImportCsvModal() {
+      document.getElementById('csv-file-input').value = '';
+      document.getElementById('csv-file-name').textContent = 'Maksimal 5MB, format .csv murni (UTF-8)';
+      document.getElementById('csv-preview-container').classList.add('hidden');
+      document.getElementById('btn-do-import').disabled = true;
+      parsedCsvRows = [];
+      document.getElementById('modal-import-csv').classList.remove('hidden');
+    }
+
+    function closeImportCsvModal() {
+      document.getElementById('modal-import-csv').classList.add('hidden');
+    }
+
+    function handleCsvFile(input) {
+      const file = input.files[0];
+      if (!file) return;
+
+      document.getElementById('csv-file-name').textContent = `Berkas: ${file.name} (${Math.round(file.size / 1024)} KB)`;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const text = e.target.result;
+        const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        if (lines.length <= 1) {
+          showToast('File CSV tidak memiliki baris data!', 'error');
+          return;
+        }
+
+        const rows = [];
+        for (let i = 1; i < lines.length; i++) {
+          const parts = lines[i].split(',').map(p => p.trim());
+          if (parts.length >= 4) {
+            rows.push({
+              id: parts[0] || `UP-CSV-${i}`,
+              nama: parts[1] || 'Karyawan Baru',
+              jabatan: parts[2] || 'Staff',
+              departemen: parts[3] || 'Operasional',
+              gajiPokok: parseInt(parts[4], 10) || 7500000,
+              tunjangan: parseInt(parts[5], 10) || 1500000,
+              potongan: parseInt(parts[6], 10) || 225000
+            });
+          }
+        }
+
+        parsedCsvRows = rows;
+        document.getElementById('csv-preview-title').textContent = `File: ${file.name}`;
+        document.getElementById('csv-preview-count').textContent = `${rows.length} data valid terbaca`;
+        document.getElementById('csv-preview-container').classList.remove('hidden');
+        document.getElementById('btn-do-import').disabled = false;
+      };
+      reader.readAsText(file);
+    }
+
+    function executeCsvImport() {
+      if (parsedCsvRows.length === 0) return;
+
+      showConfirmDialog(
+        'Konfirmasi Impor Data CSV',
+        `Sistem akan menambahkan ${parsedCsvRows.length} data pegawai baru dari berkas CSV ke dalam database lokal. Lanjutkan?`,
+        'Ya, Impor Data',
+        false,
+        () => {
+          employeesData = [...parsedCsvRows, ...employeesData];
+          saveLocalEmployees(employeesData);
+          renderEmployees(employeesData);
+          closeImportCsvModal();
+          showToast(`Berhasil mengimpor ${parsedCsvRows.length} pegawai dari CSV!`, 'success');
+        }
+      );
+    }
+  </script>
+</body>
+</html>

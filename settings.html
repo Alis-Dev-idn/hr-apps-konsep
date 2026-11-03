@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengaturan Profil - Upajiwa Enterprise</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#E8F4EC] text-[#334D40] min-h-screen flex">
+
+  <!-- Mobile Drawer Container -->
+  <div id="mobile-drawer"></div>
+
+  <!-- Desktop Floating Sidebar (Deep Emerald #0D6840) -->
+  <aside id="desktop-sidebar" class="hidden md:block w-64 flex-shrink-0 min-h-screen sticky top-0"></aside>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col min-w-0 min-h-screen">
+    <!-- Topbar (Floating Emerald Bar) -->
+    <header id="topbar"></header>
+
+    <!-- Page Content Container -->
+    <main class="flex-1 px-4 sm:px-6 lg:px-8 py-6 max-w-4xl w-full mx-auto space-y-6">
+
+      <!-- Header Section -->
+      <div>
+        <h1 class="font-heading font-black text-2xl sm:text-3xl text-[#13231B] tracking-tight">Pengaturan Profil Pengguna</h1>
+        <p class="text-xs sm:text-sm text-[#567364] mt-1">Perbarui informasi kontak pribadi, foto avatar, dan keamanan akun Anda.</p>
+      </div>
+
+      <!-- Profile Form Card -->
+      <div class="bg-white rounded-3xl border border-[#D5E7DC] p-6 sm:p-8 shadow-xs space-y-6">
+        
+        <!-- Avatar Upload Section -->
+        <div class="flex flex-col sm:flex-row items-center gap-6 pb-6 border-b border-[#E8F4EC]">
+          <div class="relative">
+            <div id="avatar-preview" class="w-24 h-24 rounded-3xl bg-[#0D6840] text-white font-black text-3xl flex items-center justify-center shadow-lg shadow-[#0D6840]/25 overflow-hidden">
+              SJ
+            </div>
+            <label class="absolute -bottom-2 -right-2 p-2 bg-[#13231B] text-white rounded-2xl cursor-pointer hover:bg-[#0D6840] shadow-md border border-white/20 transition-colors" title="Ganti Foto">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+              <input type="file" id="avatar-input" accept="image/*" class="hidden" onchange="previewAvatar(this)">
+            </label>
+          </div>
+
+          <div class="space-y-1 text-center sm:text-left">
+            <h3 class="font-heading font-black text-lg text-[#13231B]" id="profile-display-name">Sarah Jenkins</h3>
+            <p class="text-xs text-[#567364]" id="profile-display-role">Head of People & Culture &bull; Human Resources</p>
+            <p class="text-[11px] text-[#567364]">Format yang didukung: PNG, JPG, GIF hingga maksimal 2MB.</p>
+          </div>
+        </div>
+
+        <!-- Form Input Field -->
+        <form id="profile-form" onsubmit="handleProfileSubmit(event)" class="space-y-4 text-xs sm:text-sm">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Read-only Field: NIP -->
+            <div>
+              <label class="block font-bold text-[#13231B] mb-1 flex items-center justify-between">
+                <span>NIP (Nomor Induk)</span>
+                <span class="text-[10px] text-[#D97706] font-semibold">Terkunci (Readonly)</span>
+              </label>
+              <input type="text" id="profile-nip" value="UP-ADM-01" readonly class="w-full px-3.5 py-2.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-[#567364] font-mono cursor-not-allowed">
+            </div>
+
+            <!-- Read-only Field: Jabatan & Hak Akses -->
+            <div>
+              <label class="block font-bold text-[#13231B] mb-1 flex items-center justify-between">
+                <span>Jabatan Struktural</span>
+                <span class="text-[10px] text-[#D97706] font-semibold">Terkunci (Readonly)</span>
+              </label>
+              <input type="text" id="profile-jabatan" value="Head of People & Culture" readonly class="w-full px-3.5 py-2.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-[#567364] cursor-not-allowed">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block font-bold text-[#13231B] mb-1">Nama Lengkap</label>
+              <input type="text" id="profile-name" value="Sarah Jenkins" required class="w-full px-3.5 py-2.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-[#13231B] focus:outline-none focus:border-[#0D6840]">
+            </div>
+
+            <div>
+              <label class="block font-bold text-[#13231B] mb-1">Email Perusahaan</label>
+              <input type="email" id="profile-email" value="sarah.jenkins@pt-maju.co.id" required class="w-full px-3.5 py-2.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-[#13231B] focus:outline-none focus:border-[#0D6840]">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block font-bold text-[#13231B] mb-1">Nomor WhatsApp / HP</label>
+              <input type="tel" id="profile-phone" value="+62 812-3456-7890" class="w-full px-3.5 py-2.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-[#13231B] focus:outline-none focus:border-[#0D6840]">
+            </div>
+
+            <div>
+              <label class="block font-bold text-[#13231B] mb-1">Kota Domisili</label>
+              <input type="text" id="profile-city" value="Jakarta Selatan" class="w-full px-3.5 py-2.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-[#13231B] focus:outline-none focus:border-[#0D6840]">
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-[#E8F4EC] flex justify-end gap-3">
+            <button type="reset" class="px-4 py-2.5 border border-[#D5E7DC] hover:bg-[#E8F4EC] text-[#334D40] rounded-xl font-bold">
+              Batal
+            </button>
+            <button type="submit" class="px-5 py-2.5 bg-[#0D6840] hover:bg-[#094F30] text-white font-bold rounded-xl transition-all shadow-md shadow-[#0D6840]/20">
+              Simpan Perubahan
+            </button>
+          </div>
+        </form>
+
+      </div>
+
+    </main>
+  </div>
+
+  <script src="mock-data.js"></script>
+  <script src="layout.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initAppShell('settings');
+      loadProfileData();
+    });
+
+    function loadProfileData() {
+      const currentRole = getActiveRole();
+      if (currentRole === 'employee') {
+        document.getElementById('avatar-preview').textContent = 'BS';
+        document.getElementById('profile-display-name').textContent = 'Budi Santoso';
+        document.getElementById('profile-display-role').textContent = 'Senior Frontend Engineer • Divisi Teknologi';
+        document.getElementById('profile-nip').value = 'UP-001';
+        document.getElementById('profile-jabatan').value = 'Senior Frontend Engineer';
+        document.getElementById('profile-name').value = 'Budi Santoso';
+        document.getElementById('profile-email').value = 'budi.santoso@pt-maju.co.id';
+        document.getElementById('profile-phone').value = '+62 813-8899-7711';
+        document.getElementById('profile-city').value = 'Jakarta Timur';
+      } else {
+        document.getElementById('avatar-preview').textContent = 'SJ';
+        document.getElementById('profile-display-name').textContent = 'Sarah Jenkins';
+        document.getElementById('profile-display-role').textContent = 'Head of People & Culture • Human Resources';
+        document.getElementById('profile-nip').value = 'UP-ADM-01';
+        document.getElementById('profile-jabatan').value = 'Head of People & Culture';
+        document.getElementById('profile-name').value = 'Sarah Jenkins';
+        document.getElementById('profile-email').value = 'sarah.jenkins@pt-maju.co.id';
+        document.getElementById('profile-phone').value = '+62 812-3456-7890';
+        document.getElementById('profile-city').value = 'Jakarta Selatan';
+      }
+    }
+
+    function previewAvatar(input) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const preview = document.getElementById('avatar-preview');
+          preview.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
+          showToast('Foto profil berhasil diunggah secara lokal.', 'success');
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    function handleProfileSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('profile-name').value;
+
+      showConfirmDialog(
+        'Simpan Profil?',
+        `Apakah Anda ingin menyimpan pembaruan profil atas nama "${name}"?`,
+        'Simpan',
+        false,
+        () => {
+          document.getElementById('profile-display-name').textContent = name;
+          showToast('Profil Anda berhasil diperbarui!', 'success');
+        }
+      );
+    }
+  </script>
+</body>
+</html>

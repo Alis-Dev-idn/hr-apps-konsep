@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail Pegawai - Upajiwa Enterprise</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#E8F4EC] text-[#334D40] min-h-screen flex">
+
+  <!-- Mobile Drawer Container -->
+  <div id="mobile-drawer"></div>
+
+  <!-- Desktop Floating Sidebar (Deep Emerald #0D6840) -->
+  <aside id="desktop-sidebar" class="hidden md:block w-64 flex-shrink-0 min-h-screen sticky top-0"></aside>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col min-w-0 min-h-screen">
+    <!-- Topbar (Floating Emerald Bar) -->
+    <header id="topbar"></header>
+
+    <!-- Page Content Container -->
+    <main class="flex-1 px-4 sm:px-6 lg:px-8 py-6 max-w-7xl w-full mx-auto space-y-6">
+
+      <!-- Breadcrumb & Nav Back -->
+      <div class="flex items-center justify-between">
+        <a href="pegawai.html" class="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[#0D6840] hover:underline transition-colors">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+          </svg>
+          <span>Kembali ke Direktori Pegawai</span>
+        </a>
+
+        <div class="flex items-center gap-2">
+          <button onclick="handleEditCurrentEmp()" class="px-3.5 py-2 bg-white hover:bg-[#DDF2E4] text-xs sm:text-sm font-bold rounded-2xl text-[#0D6840] transition-colors flex items-center gap-1.5 border border-[#D5E7DC] shadow-xs">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+            </svg>
+            <span>Edit Profil</span>
+          </button>
+          <button onclick="handleDeleteCurrentEmp()" class="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs sm:text-sm font-bold rounded-2xl transition-colors flex items-center gap-1.5 border border-rose-200">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+            <span>Hapus Pegawai</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Hero Card Detail Pegawai -->
+      <div class="bg-white rounded-3xl border border-[#D5E7DC] p-6 sm:p-8 shadow-xs">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-[#E8F4EC]">
+          <div class="flex items-center gap-4 sm:gap-5">
+            <div id="hero-avatar" class="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-[#0D6840] text-white font-black text-2xl flex items-center justify-center shadow-lg shadow-[#0D6840]/20 flex-shrink-0">
+              BS
+            </div>
+            <div>
+              <div class="flex items-center gap-2.5">
+                <h1 id="hero-name" class="font-heading font-black text-xl sm:text-2xl text-[#13231B]">Budi Santoso</h1>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#DDF2E4] text-[#0D6840] border border-[#0D6840]/20">
+                  Karyawan Tetap
+                </span>
+              </div>
+              <p id="hero-role" class="text-xs sm:text-sm text-[#567364] mt-0.5">Senior Frontend Engineer &bull; Divisi Teknologi</p>
+              <div class="flex items-center gap-4 mt-2 text-xs text-[#567364]">
+                <span class="font-mono font-semibold" id="hero-nip">NIP: UP-001</span>
+                <span>&bull;</span>
+                <span id="hero-email">budi.santoso@pt-maju.co.id</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Action Preview Slip Terakhir -->
+          <button onclick="previewLatestSlip()" class="px-5 py-3 bg-[#0D6840] hover:bg-[#094F30] text-white rounded-2xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-md shadow-[#0D6840]/20">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+            </svg>
+            <span>Slip Gaji Terakhir (A4)</span>
+          </button>
+        </div>
+
+        <!-- Detail Data Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 pt-6 text-xs sm:text-sm">
+          <div>
+            <span class="text-xs text-[#567364] uppercase tracking-wider block font-bold">Gaji Pokok Berjalan</span>
+            <span id="hero-salary" class="font-heading font-black text-xl text-[#0D6840] font-mono mt-0.5 block">Rp 15.000.000</span>
+            <span class="text-[11px] text-[#567364]">Tunjangan: Rp 3.000.000</span>
+          </div>
+          <div>
+            <span class="text-xs text-[#567364] uppercase tracking-wider block font-bold">Rekening Bank</span>
+            <span class="font-bold text-[#13231B] mt-0.5 block">Bank Mandiri</span>
+            <span class="text-[11px] text-[#567364] font-mono">No. Rek: 123-00-9876543-2</span>
+          </div>
+          <div>
+            <span class="text-xs text-[#567364] uppercase tracking-wider block font-bold">Perpajakan & BPJS</span>
+            <span class="font-bold text-[#13231B] mt-0.5 block">NPWP Terdaftar</span>
+            <span class="text-[11px] text-[#567364] font-mono">BPJS TK: 210899120938</span>
+          </div>
+          <div>
+            <span class="text-xs text-[#567364] uppercase tracking-wider block font-bold">Tanggal Bergabung</span>
+            <span class="font-bold text-[#13231B] mt-0.5 block">12 Januari 2023</span>
+            <span class="text-[11px] text-[#0D6840] font-bold">Masa Kerja: 3 Tahun 9 Bulan</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB SECTION DI BAGIAN AKHIR HALAMAN SESUAI REVISI POIN 8 -->
+      <div class="bg-white rounded-3xl border border-[#D5E7DC] shadow-xs overflow-hidden">
+        <!-- Tab Navigation Bar -->
+        <div class="flex border-b border-[#D5E7DC] px-4 sm:px-6 pt-3 bg-[#F4F9F5]">
+          <button id="tab-btn-payroll" onclick="switchDetailTab('payroll')" class="py-3 px-5 font-heading font-bold text-xs sm:text-sm border-b-2 border-[#0D6840] text-[#0D6840] flex items-center gap-2 transition-all">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+            </svg>
+            <span>Rekam Jejak Payroll (12 Bulan)</span>
+          </button>
+          <button id="tab-btn-absensi" onclick="switchDetailTab('absensi')" class="py-3 px-5 font-heading font-bold text-xs sm:text-sm border-b-2 border-transparent text-[#567364] hover:text-[#13231B] flex items-center gap-2 transition-all">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+            </svg>
+            <span>Rekapitulasi Presensi (12 Bulan)</span>
+          </button>
+        </div>
+
+        <!-- TAB CONTENT 1: PAYROLL 12 BULAN -->
+        <div id="tab-content-payroll" class="p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="font-heading font-black text-base text-[#13231B]">Riwayat Penggajian 12 Bulan Terakhir</h3>
+              <p class="text-xs text-[#567364]">Seluruh riwayat pembayaran gaji pokok, tunjangan, potongan, dan cetak slip gaji.</p>
+            </div>
+            <span class="text-xs font-bold px-3 py-1 bg-[#DDF2E4] text-[#0D6840] rounded-xl border border-[#0D6840]/20">
+              12 Periode Lengkap
+            </span>
+          </div>
+
+          <!-- Desktop Table: Rekam Jejak Payroll (>= 768px) -->
+          <div class="hidden md:block overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs sm:text-sm">
+              <thead>
+                <tr class="border-b border-[#D5E7DC] bg-[#F4F9F5] text-[#567364] uppercase text-[11px] font-bold">
+                  <th class="py-3.5 px-4">Periode Bulan</th>
+                  <th class="py-3.5 px-4">Gaji Pokok</th>
+                  <th class="py-3.5 px-4">Tunjangan</th>
+                  <th class="py-3.5 px-4">Potongan</th>
+                  <th class="py-3.5 px-4">Penerimaan Bersih (THP)</th>
+                  <th class="py-3.5 px-4">Status</th>
+                  <th class="py-3.5 px-4 text-right">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="detail-payroll-table-body" class="divide-y divide-[#E8F4EC] text-[#334D40]">
+                <!-- Injected via renderPayrollHistory() -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Mobile Card List View: Rekam Jejak Payroll (< 768px) -->
+          <div id="detail-payroll-card-list" class="block md:hidden space-y-3">
+            <!-- Injected via renderPayrollHistory() -->
+          </div>
+        </div>
+
+        <!-- TAB CONTENT 2: REKAP PRESENSI 12 BULAN -->
+        <div id="tab-content-absensi" class="p-6 hidden">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="font-heading font-black text-base text-[#13231B]">Rekapitulasi Kehadiran 12 Bulan Terakhir</h3>
+              <p class="text-xs text-[#567364]">Statistik hari kerja, kedisiplinan, keterlambatan, dan pemanfaatan cuti tahunan.</p>
+            </div>
+            <span class="text-xs font-bold px-3 py-1 bg-[#DDF2E4] text-[#0D6840] rounded-xl border border-[#0D6840]/20">
+              Rata-rata Kehadiran: 97.8%
+            </span>
+          </div>
+
+          <!-- Desktop Table: Rekap Presensi (>= 768px) -->
+          <div class="hidden md:block overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs sm:text-sm">
+              <thead>
+                <tr class="border-b border-[#D5E7DC] bg-[#F4F9F5] text-[#567364] uppercase text-[11px] font-bold">
+                  <th class="py-3.5 px-4">Periode</th>
+                  <th class="py-3.5 px-4">Hari Kerja</th>
+                  <th class="py-3.5 px-4">Hadir Tepat Waktu</th>
+                  <th class="py-3.5 px-4">Terlambat</th>
+                  <th class="py-3.5 px-4">Izin / Sakit</th>
+                  <th class="py-3.5 px-4">Cuti / Alpha</th>
+                  <th class="py-3.5 px-4 text-right">Tingkat Kehadiran</th>
+                </tr>
+              </thead>
+              <tbody id="detail-absensi-table-body" class="divide-y divide-[#E8F4EC] text-[#334D40]">
+                <!-- Injected via renderAttendanceHistory() -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Mobile Card List View: Rekap Presensi (< 768px) -->
+          <div id="detail-absensi-card-list" class="block md:hidden space-y-3">
+            <!-- Injected via renderAttendanceHistory() -->
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <script src="mock-data.js"></script>
+  <script src="layout.js"></script>
+  <script>
+    let currentEmp = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initAppShell('pegawai');
+
+      const params = new URLSearchParams(window.location.search);
+      const empId = params.get('id') || 'UP-001';
+      const employees = getLocalEmployees();
+
+      currentEmp = employees.find(e => e.id === empId) || employees[0];
+      renderHeroDetails(currentEmp);
+      renderPayrollHistory(currentEmp);
+      renderAttendanceHistory(currentEmp);
+    });
+
+    function renderHeroDetails(emp) {
+      if (!emp) return;
+      document.getElementById('hero-name').textContent = emp.nama;
+      document.getElementById('hero-role').textContent = `${emp.jabatan} • Divisi ${emp.departemen}`;
+      document.getElementById('hero-nip').textContent = `NIP: ${emp.id}`;
+      document.getElementById('hero-email').textContent = `${emp.nama.toLowerCase().replace(/\s+/g, '.')}@pt-maju.co.id`;
+      document.getElementById('hero-salary').textContent = `Rp ${emp.gajiPokok.toLocaleString('id-ID')}`;
+      document.getElementById('hero-avatar').textContent = emp.nama.split(' ').map(n=>n[0]).join('').substring(0,2);
+    }
+
+    function switchDetailTab(tab) {
+      const payrollTab = document.getElementById('tab-content-payroll');
+      const absensiTab = document.getElementById('tab-content-absensi');
+      const btnPayroll = document.getElementById('tab-btn-payroll');
+      const btnAbsensi = document.getElementById('tab-btn-absensi');
+
+      if (tab === 'payroll') {
+        payrollTab.classList.remove('hidden');
+        absensiTab.classList.add('hidden');
+        btnPayroll.className = 'py-3 px-5 font-heading font-bold text-xs sm:text-sm border-b-2 border-[#0D6840] text-[#0D6840] flex items-center gap-2 transition-all';
+        btnAbsensi.className = 'py-3 px-5 font-heading font-bold text-xs sm:text-sm border-b-2 border-transparent text-[#567364] hover:text-[#13231B] flex items-center gap-2 transition-all';
+      } else {
+        payrollTab.classList.add('hidden');
+        absensiTab.classList.remove('hidden');
+        btnAbsensi.className = 'py-3 px-5 font-heading font-bold text-xs sm:text-sm border-b-2 border-[#0D6840] text-[#0D6840] flex items-center gap-2 transition-all';
+        btnPayroll.className = 'py-3 px-5 font-heading font-bold text-xs sm:text-sm border-b-2 border-transparent text-[#567364] hover:text-[#13231B] flex items-center gap-2 transition-all';
+      }
+    }
+
+    function renderPayrollHistory(emp) {
+      const tbody = document.getElementById('detail-payroll-table-body');
+      const cardList = document.getElementById('detail-payroll-card-list');
+      const months = (typeof PAYROLL_MONTHS_12 !== 'undefined') ? PAYROLL_MONTHS_12 : [
+        'Oktober 2026', 'September 2026', 'Agustus 2026', 'Juli 2026', 
+        'Juni 2026', 'Mei 2026', 'April 2026', 'Maret 2026', 
+        'Februari 2026', 'Januari 2026', 'Desember 2025', 'November 2025'
+      ];
+
+      const gajiPokok = emp.gajiPokok || 15000000;
+      const tunjangan = emp.tunjangan || Math.round(gajiPokok * 0.2);
+      const potongan = emp.potongan || Math.round(gajiPokok * 0.03);
+      const thp = gajiPokok + tunjangan - potongan;
+
+      // Desktop Table Rows
+      tbody.innerHTML = months.map(m => {
+        const monthLabel = (typeof m === 'object' && m !== null) ? (m.label || m.shortLabel || m.key) : m;
+        return `
+        <tr class="hover:bg-[#F4F9F5] transition-colors">
+          <td class="py-3 px-4 font-bold text-[#13231B]">${monthLabel}</td>
+          <td class="py-3 px-4 font-mono font-medium">Rp ${gajiPokok.toLocaleString('id-ID')}</td>
+          <td class="py-3 px-4 font-mono text-[#0D6840] font-semibold">Rp ${tunjangan.toLocaleString('id-ID')}</td>
+          <td class="py-3 px-4 font-mono text-rose-500">-Rp ${potongan.toLocaleString('id-ID')}</td>
+          <td class="py-3 px-4 font-mono font-black text-[#0D6840]">Rp ${thp.toLocaleString('id-ID')}</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#DDF2E4] text-[#0D6840]">
+              Terbayar
+            </span>
+          </td>
+          <td class="py-3 px-4 text-right">
+            <button onclick="openPayslipModalById('${emp.id}', '${monthLabel}')" class="px-3 py-1.5 bg-[#E8F4EC] text-[#0D6840] hover:bg-[#DDF2E4] rounded-xl text-xs font-bold inline-flex items-center gap-1 transition-colors border border-[#D5E7DC]">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+              <span>Slip A4</span>
+            </button>
+          </td>
+        </tr>
+      `;
+      }).join('');
+
+      // Mobile Card List View
+      cardList.innerHTML = months.map(m => {
+        const monthLabel = (typeof m === 'object' && m !== null) ? (m.label || m.shortLabel || m.key) : m;
+        return `
+        <div class="bg-[#F4F9F5] p-4 rounded-2xl border border-[#D5E7DC] space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-heading font-bold text-sm text-[#13231B]">${monthLabel}</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#DDF2E4] text-[#0D6840]">
+              Terbayar
+            </span>
+          </div>
+          <div class="grid grid-cols-2 gap-2 text-xs text-[#567364]">
+            <div>
+              <span class="text-[#567364] block text-[11px]">Gaji Bersih (THP):</span>
+              <span class="font-mono font-bold text-[#0D6840] text-sm">Rp ${thp.toLocaleString('id-ID')}</span>
+            </div>
+            <div>
+              <span class="text-[#567364] block text-[11px]">Gaji Pokok:</span>
+              <span class="font-mono text-[#13231B]">Rp ${gajiPokok.toLocaleString('id-ID')}</span>
+            </div>
+          </div>
+          <div class="pt-2 border-t border-[#D5E7DC] flex justify-end">
+            <button onclick="openPayslipModalById('${emp.id}', '${monthLabel}')" class="w-full sm:w-auto px-3.5 py-2 bg-[#0D6840] text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+              <span>Pratinjau Slip Gaji (A4)</span>
+            </button>
+          </div>
+        </div>
+      `;
+      }).join('');
+    }
+
+    function renderAttendanceHistory(emp) {
+      const tbody = document.getElementById('detail-absensi-table-body');
+      const cardList = document.getElementById('detail-absensi-card-list');
+      const months = (typeof PAYROLL_MONTHS_12 !== 'undefined') ? PAYROLL_MONTHS_12 : [
+        'Oktober 2026', 'September 2026', 'Agustus 2026', 'Juli 2026', 
+        'Juni 2026', 'Mei 2026', 'April 2026', 'Maret 2026', 
+        'Februari 2026', 'Januari 2026', 'Desember 2025', 'November 2025'
+      ];
+
+      // Desktop Table
+      tbody.innerHTML = months.map((m, idx) => {
+        const monthLabel = (typeof m === 'object' && m !== null) ? (m.label || m.shortLabel || m.key) : m;
+        const totalHari = 22;
+        const hadir = (idx % 3 === 0) ? 22 : 21;
+        const terlambat = (idx % 2 === 0) ? 1 : 0;
+        const izin = (hadir === 21) ? 1 : 0;
+        const alpha = 0;
+        const persentase = ((hadir / totalHari) * 100).toFixed(1);
+
+        return `
+          <tr class="hover:bg-[#F4F9F5] transition-colors">
+            <td class="py-3 px-4 font-bold text-[#13231B]">${monthLabel}</td>
+            <td class="py-3 px-4">${totalHari} Hari</td>
+            <td class="py-3 px-4 text-[#0D6840] font-bold">${hadir} Hari</td>
+            <td class="py-3 px-4 text-[#D97706] font-semibold">${terlambat} Kali</td>
+            <td class="py-3 px-4 text-[#567364]">${izin} Hari</td>
+            <td class="py-3 px-4 text-rose-500">${alpha}</td>
+            <td class="py-3 px-4 text-right">
+              <span class="inline-block px-2.5 py-1 rounded-xl font-mono font-bold text-xs bg-[#DDF2E4] text-[#0D6840] border border-[#0D6840]/20">
+                ${persentase}%
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      // Mobile Card List View
+      cardList.innerHTML = months.map((m, idx) => {
+        const monthLabel = (typeof m === 'object' && m !== null) ? (m.label || m.shortLabel || m.key) : m;
+        const totalHari = 22;
+        const hadir = (idx % 3 === 0) ? 22 : 21;
+        const terlambat = (idx % 2 === 0) ? 1 : 0;
+        const izin = (hadir === 21) ? 1 : 0;
+        const persentase = ((hadir / totalHari) * 100).toFixed(1);
+
+        return `
+          <div class="bg-[#F4F9F5] p-4 rounded-2xl border border-[#D5E7DC] space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-heading font-bold text-sm text-[#13231B]">${monthLabel}</span>
+              <span class="px-2 py-0.5 rounded-full font-mono font-bold text-xs bg-[#DDF2E4] text-[#0D6840]">
+                ${persentase}% Hadir
+              </span>
+            </div>
+            <div class="grid grid-cols-3 gap-2 text-xs text-[#567364] pt-1">
+              <div>
+                <span class="text-[#567364] block text-[10px]">Tepat Waktu</span>
+                <span class="font-bold text-[#0D6840]">${hadir} Hari</span>
+              </div>
+              <div>
+                <span class="text-[#567364] block text-[10px]">Terlambat</span>
+                <span class="font-bold text-[#D97706]">${terlambat} Kali</span>
+              </div>
+              <div>
+                <span class="text-[#567364] block text-[10px]">Izin / Sakit</span>
+                <span class="font-semibold text-[#13231B]">${izin} Hari</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function previewLatestSlip() {
+      if (currentEmp) {
+        openPayslipModalById(currentEmp.id, 'Oktober 2026');
+      }
+    }
+
+    function handleEditCurrentEmp() {
+      window.location.href = `pegawai.html`;
+    }
+
+    function handleDeleteCurrentEmp() {
+      if (!currentEmp) return;
+      showConfirmDialog(
+        'Hapus Karyawan Ini?',
+        `Apakah Anda yakin ingin menghapus data "${currentEmp.nama}" (${currentEmp.id})? Riwayat 12 bulan payroll dan presensinya akan terhapus.`,
+        'Ya, Hapus Data',
+        true,
+        () => {
+          let list = getLocalEmployees();
+          list = list.filter(e => e.id !== currentEmp.id);
+          saveLocalEmployees(list);
+          showToast(`Karyawan ${currentEmp.nama} berhasil dihapus.`, 'success');
+          setTimeout(() => {
+            window.location.href = 'pegawai.html';
+          }, 800);
+        }
+      );
+    }
+  </script>
+</body>
+</html>

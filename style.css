@@ -1,0 +1,149 @@
+/* Upajiwa Shared Styles - Living Forest Canvas Theme & Print A4 Support */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --color-canvas: #E8F4EC;
+  --color-primary: #0D6840;
+  --color-primary-dark: #094F30;
+  --color-primary-light: #DDF2E4;
+  --color-secondary: #D97706;
+  --color-secondary-light: #FEF3C7;
+  --color-mint: #10B981;
+  --color-mint-light: #D1FAE5;
+  --color-title: #13231B;
+  --color-body: #334D40;
+  --color-muted: #567364;
+  --color-border: #D5E7DC;
+  --color-card: #FFFFFF;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--color-canvas);
+  color: var(--color-body);
+}
+
+.font-heading {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Custom Living Forest Utilities */
+.bg-canvas {
+  background-color: #E8F4EC;
+}
+
+.bg-emerald-brand {
+  background-color: #0D6840;
+}
+
+.bg-emerald-brand-dark {
+  background-color: #094F30;
+}
+
+.text-emerald-brand {
+  color: #0D6840;
+}
+
+.border-forest {
+  border-color: #D5E7DC;
+}
+
+.text-forest-title {
+  color: #13231B;
+}
+
+.text-forest-body {
+  color: #334D40;
+}
+
+.text-forest-muted {
+  color: #567364;
+}
+
+/* =========================================================================
+   PRINT MEDIA CONFIGURATION KHUSUS SLIP GAJI A4 PAS 1 LEMBAR BERSIH
+   Memastikan HANYA #printable-payslip yang tercetak, mengisolasi 100% 
+   dari seluruh komponen web lainnya (sidebar, topbar, modal overlay, button)
+   ========================================================================= */
+@page {
+  size: A4 portrait;
+  margin: 12mm 15mm;
+}
+
+@media print {
+  /* Sembunyikan segalanya secara total pada halaman */
+  html, body {
+    background: #ffffff !important;
+    color: #13231B !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* Tampilkan secara eksklusif elemen container slip gaji */
+  #modal-slip-gaji,
+  #modal-slip-gaji * {
+    visibility: visible !important;
+  }
+
+  /* Hilangkan background overlay hitam, scrollbar, dan header modal */
+  #modal-slip-gaji {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    display: block !important;
+    z-index: 99999 !important;
+  }
+
+  #modal-slip-gaji > div {
+    max-width: 100% !important;
+    width: 100% !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+  }
+
+  .no-print {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  /* Format dokumen kertas A4 presisi 1 lembar */
+  #printable-payslip {
+    visibility: visible !important;
+    position: relative !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    page-break-inside: avoid !important;
+    page-break-after: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Pastikan kontras teks dan garis border cetak tajam */
+  #printable-payslip * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

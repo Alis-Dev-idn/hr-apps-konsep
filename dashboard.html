@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Upajiwa Enterprise Workspace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#E8F4EC] text-[#334D40] min-h-screen flex">
+
+  <!-- Mobile Drawer Container -->
+  <div id="mobile-drawer"></div>
+
+  <!-- Desktop Floating Sidebar (Deep Emerald #0D6840) -->
+  <aside id="desktop-sidebar" class="hidden md:block w-64 flex-shrink-0 min-h-screen sticky top-0"></aside>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col min-w-0 min-h-screen">
+    <!-- Topbar (Floating Emerald Bar) -->
+    <header id="topbar"></header>
+
+    <!-- Page Content Container -->
+    <main class="flex-1 px-4 sm:px-6 lg:px-8 py-6 max-w-7xl w-full mx-auto space-y-6">
+
+      <!-- ===================================== -->
+      <!-- ADMIN VIEW DASHBOARD (SARAH JENKINS)  -->
+      <!-- Sesuai referensi assets/Dashboard.png -->
+      <!-- ===================================== -->
+      <div id="admin-dashboard-view" class="space-y-6">
+        
+        <!-- Welcome Heading Hero (Persis assets/Dashboard.png) -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h1 class="font-heading font-black text-2xl sm:text-3xl text-[#13231B] tracking-tight">
+              Good morning, Sarah
+            </h1>
+            <p class="text-xs sm:text-sm text-[#567364] mt-0.5">
+              Here's what's happening with your workforce today across 8 locations in Indonesia.
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#DDF2E4] text-[#0D6840] text-xs font-bold border border-[#0D6840]/20">
+              <span class="w-2 h-2 rounded-full bg-[#0D6840] animate-pulse"></span>
+              Live Synced &bull; Oktober 2026
+            </span>
+          </div>
+        </div>
+
+        <!-- Metric Cards Bento Grid (Persis tata letak & visual Dashboard.png) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          
+          <!-- Card 1: JUMLAH KARYAWAN TERDAFTAR (Dengan Progress Bar 92%) -->
+          <div class="bg-white p-6 rounded-3xl border border-[#D5E7DC] shadow-xs flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-[11px] font-bold text-[#567364] uppercase tracking-wider">Jumlah Karyawan Terdaftar</span>
+                <span class="w-8 h-8 rounded-2xl bg-[#DDF2E4] text-[#0D6840] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                  </svg>
+                </span>
+              </div>
+              <div class="font-heading font-black text-4xl text-[#13231B] tracking-tight" id="stat-total-emp">
+                20
+              </div>
+            </div>
+            
+            <div class="mt-4 pt-3 border-t border-[#E8F4EC]">
+              <div class="flex items-center justify-between text-xs text-[#567364] mb-1.5 font-medium">
+                <span>Absensi : 18 / 20 total</span>
+                <span class="font-bold text-[#0D6840]">90% of expected</span>
+              </div>
+              <div class="w-full bg-[#E8F4EC] h-2 rounded-full overflow-hidden">
+                <div class="bg-[#10B981] h-full rounded-full" style="width: 90%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: Sudah Masuk -->
+          <div class="bg-white p-6 rounded-3xl border border-[#D5E7DC] shadow-xs flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-[11px] font-bold text-[#567364] uppercase tracking-wider">Sudah Masuk</span>
+                <span class="w-8 h-8 rounded-2xl bg-amber-50 text-[#D97706] border border-amber-200/60 flex items-center justify-center flex-shrink-0">
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                </span>
+              </div>
+              <div class="flex items-baseline gap-2">
+                <span class="font-heading font-black text-4xl text-[#13231B] tracking-tight" id="stat-hadir-today">18</span>
+                <span class="text-xs text-[#567364] font-medium">Hari ini</span>
+              </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-[#E8F4EC] text-xs text-[#0D6840] font-semibold flex items-center gap-1">
+              <span>● Seluruh staf telah check-in</span>
+            </div>
+          </div>
+
+          <!-- Card 3: Tidak Masuk -->
+          <div class="bg-white p-6 rounded-3xl border border-[#D5E7DC] shadow-xs flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-[11px] font-bold text-[#567364] uppercase tracking-wider">Tidak Masuk</span>
+                <span class="w-8 h-8 rounded-2xl bg-rose-50 text-rose-600 border border-rose-200/60 flex items-center justify-center flex-shrink-0">
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                </span>
+              </div>
+              <div class="flex items-baseline gap-2">
+                <span class="font-heading font-black text-4xl text-[#D97706] tracking-tight" id="stat-absen-today">2</span>
+                <span class="text-xs text-[#567364] font-medium">Hari ini</span>
+              </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-[#E8F4EC] text-xs text-[#567364]">
+              <span>1 Sakit (surat dokter), 1 Cuti Tahunan</span>
+            </div>
+          </div>
+
+          <!-- Card 4: Total Beban Payroll Okt -->
+          <div class="bg-[#0D6840] text-white p-6 rounded-3xl shadow-md shadow-[#0D6840]/20 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-[11px] font-bold text-emerald-200 uppercase tracking-wider">Total Payroll Okt</span>
+                <span class="w-8 h-8 rounded-2xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                  <svg class="w-4 h-4 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                </span>
+              </div>
+              <div class="font-heading font-black text-3xl font-mono tracking-tight">
+                Rp 239,5 Jt
+              </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-white/20 text-xs text-emerald-100 flex items-center justify-between">
+              <span>Status: Siap Ditransfer</span>
+              <a href="payroll.html" class="underline font-bold text-white">Lihat &rarr;</a>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Card Grafik Utama: Workforce Analytics & Headcount Growth / 3 Garis Absensi -->
+        <!-- Sesuai layout bento di assets/Dashboard.png -->
+        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-[#D5E7DC] shadow-xs space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h2 class="font-heading font-black text-lg sm:text-xl text-[#13231B] tracking-tight">
+                Workforce Analytics & Headcount Growth
+              </h2>
+              <p class="text-xs sm:text-sm text-[#567364] mt-0.5">
+                Cumulative team scaling velocity and tenure trajectory across 2026 (Tren 3 Garis Absensi Harian)
+              </p>
+            </div>
+            
+            <!-- Filter Tabs Pill -->
+            <div class="flex items-center gap-2 bg-[#E8F4EC] p-1 rounded-2xl self-start sm:self-auto">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white text-[#0D6840] font-bold text-xs rounded-xl shadow-2xs">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#0D6840]"></span> Masuk
+              </span>
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 text-[#567364] text-xs font-semibold">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#567364]"></span> Total
+              </span>
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 text-[#D97706] text-xs font-semibold">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#D97706]"></span> Tidak Masuk
+              </span>
+            </div>
+          </div>
+
+          <!-- Canvas Chart -->
+          <div class="h-72 w-full">
+            <canvas id="attendance3LinesChart"></canvas>
+          </div>
+
+          <!-- Bento Stat Footer (Persis bawah grafik Dashboard.png) -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-[#E8F4EC]">
+            <div class="flex items-center gap-3.5 p-3.5 rounded-2xl bg-[#F4F9F5] border border-[#D5E7DC]">
+              <span class="w-10 h-10 rounded-2xl bg-[#DDF2E4] text-[#0D6840] flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                </svg>
+              </span>
+              <div>
+                <span class="text-[11px] font-semibold text-[#567364] block">Net Growth MTD</span>
+                <span class="font-heading font-black text-sm text-[#13231B]">+14 Team Members</span>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3.5 p-3.5 rounded-2xl bg-[#F4F9F5] border border-[#D5E7DC]">
+              <span class="w-10 h-10 rounded-2xl bg-amber-50 text-[#D97706] border border-amber-200/60 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+              </span>
+              <div>
+                <span class="text-[11px] font-semibold text-[#567364] block">Average Tenure</span>
+                <span class="font-heading font-black text-sm text-[#13231B]">2.8 Years</span>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3.5 p-3.5 rounded-2xl bg-[#F4F9F5] border border-[#D5E7DC]">
+              <span class="w-10 h-10 rounded-2xl bg-emerald-50 text-[#10B981] border border-emerald-200/60 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                </svg>
+              </span>
+              <div>
+                <span class="text-[11px] font-semibold text-[#567364] block">Retention Rate</span>
+                <span class="font-heading font-black text-sm text-[#10B981]">97.6% (Annualized)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pintasan Cepat 3 Modul -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+          <a href="pegawai.html" class="p-6 bg-white hover:border-[#0D6840] border border-[#D5E7DC] rounded-3xl shadow-xs transition-all group">
+            <div class="w-10 h-10 rounded-2xl bg-[#DDF2E4] text-[#0D6840] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+              </svg>
+            </div>
+            <h3 class="font-heading font-bold text-sm text-[#13231B] group-hover:text-[#0D6840]">Data Pegawai & Tab 12 Bulan</h3>
+            <p class="text-xs text-[#567364] mt-1">Kelola direktori staf, buka detail penuh payroll, atau impor CSV terintegrasi.</p>
+          </a>
+
+          <a href="absensi.html" class="p-6 bg-white hover:border-[#0D6840] border border-[#D5E7DC] rounded-3xl shadow-xs transition-all group">
+            <div class="w-10 h-10 rounded-2xl bg-[#DDF2E4] text-[#0D6840] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+              </svg>
+            </div>
+            <h3 class="font-heading font-bold text-sm text-[#13231B] group-hover:text-[#0D6840]">Input Presensi Harian Admin</h3>
+            <p class="text-xs text-[#567364] mt-1">Catat status Hadir, Izin, Sakit, atau Alpha seluruh pegawai secara serentak.</p>
+          </a>
+
+          <a href="payroll.html" class="p-6 bg-white hover:border-[#0D6840] border border-[#D5E7DC] rounded-3xl shadow-xs transition-all group">
+            <div class="w-10 h-10 rounded-2xl bg-[#DDF2E4] text-[#0D6840] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+              </svg>
+            </div>
+            <h3 class="font-heading font-bold text-sm text-[#13231B] group-hover:text-[#0D6840]">Payroll & Slip Gaji A4</h3>
+            <p class="text-xs text-[#567364] mt-1">Otomasi kalkulasi gaji, cetak slip resmi standar A4 tanpa terpotong.</p>
+          </a>
+        </div>
+
+      </div>
+
+      <!-- ===================================== -->
+      <!-- EMPLOYEE ESS DASHBOARD (BUDI SANTOSO) -->
+      <!-- ===================================== -->
+      <div id="employee-dashboard-view" class="space-y-6 hidden">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h1 class="font-heading font-black text-2xl sm:text-3xl text-[#13231B] tracking-tight">
+              Good morning, Budi
+            </h1>
+            <p class="text-xs sm:text-sm text-[#567364] mt-0.5">
+              Senior Frontend Engineer &bull; Divisi Teknologi &bull; NIP: UP-001
+            </p>
+          </div>
+          <span class="inline-flex items-center px-3 py-1 rounded-full bg-amber-100 text-[#D97706] text-xs font-bold border border-amber-300">
+            Portal Karyawan Mandiri (ESS)
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Card Slip Gaji Terakhir -->
+          <div class="md:col-span-2 bg-white p-6 sm:p-7 rounded-3xl border border-[#D5E7DC] shadow-xs flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-bold text-[#567364] uppercase tracking-wider">Slip Gaji Terakhir (Oktober 2026)</span>
+                <span class="px-2.5 py-1 bg-[#DDF2E4] text-[#0D6840] text-xs font-bold rounded-xl border border-[#0D6840]/20">
+                  Sudah Terbayar
+                </span>
+              </div>
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-3 border-y border-[#E8F4EC]">
+                <div>
+                  <span class="text-xs text-[#567364] block">Penerimaan Bersih (THP)</span>
+                  <span class="font-heading font-black text-3xl text-[#0D6840] font-mono">
+                    Rp 17.550.000
+                  </span>
+                </div>
+                <div class="text-xs text-[#567364] space-y-1 sm:text-right">
+                  <p>Gaji Pokok: <strong class="text-[#13231B]">Rp 15.000.000</strong></p>
+                  <p>Tunjangan: <strong class="text-[#13231B]">Rp 3.000.000</strong></p>
+                  <p>Potongan BPJS & Pajak: <strong class="text-rose-600">-Rp 450.000</strong></p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mt-6 flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[#E8F4EC]">
+              <span class="text-xs text-[#567364]">Ditransfer ke Bank Mandiri (Rek: •••• 9812)</span>
+              <button onclick="openPayslipModalById('UP-001', 'Oktober 2026')" class="px-4 py-2 bg-[#0D6840] hover:bg-[#094F30] text-white rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-md">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+                Lihat & Cetak Slip Gaji (A4)
+              </button>
+            </div>
+          </div>
+
+          <!-- Card Saldo Cuti & Riwayat Presensi -->
+          <div class="bg-white p-6 sm:p-7 rounded-3xl border border-[#D5E7DC] shadow-xs flex flex-col justify-between">
+            <div>
+              <span class="text-xs font-bold text-[#567364] uppercase tracking-wider block mb-4">Saldo Hak Cuti</span>
+              <div class="text-center py-4 bg-[#F4F9F5] rounded-2xl border border-[#D5E7DC]">
+                <span class="font-heading font-black text-4xl text-[#D97706]">9</span>
+                <span class="text-xs text-[#567364] block mt-1">Hari Tersisa dari Kuota 12 Hari</span>
+              </div>
+              <div class="mt-4 space-y-2 text-xs text-[#567364]">
+                <div class="flex justify-between">
+                  <span>Cuti Terpakai:</span>
+                  <span class="font-semibold text-[#13231B]">3 Hari</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>Kehadiran Okt:</span>
+                  <span class="font-semibold text-[#0D6840]">22 / 22 Hari (100%)</span>
+                </div>
+              </div>
+            </div>
+            
+            <a href="absensi.html" class="mt-4 block text-center py-2.5 bg-[#E8F4EC] hover:bg-[#DDF2E4] text-xs font-bold text-[#0D6840] rounded-xl transition-colors border border-[#D5E7DC]">
+              Lihat Riwayat Presensi Saya &rarr;
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <script src="mock-data.js"></script>
+  <script src="layout.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initAppShell('dashboard');
+
+      const currentRole = getActiveRole();
+      const adminView = document.getElementById('admin-dashboard-view');
+      const employeeView = document.getElementById('employee-dashboard-view');
+
+      if (currentRole === 'employee') {
+        adminView.classList.add('hidden');
+        employeeView.classList.remove('hidden');
+      } else {
+        adminView.classList.remove('hidden');
+        employeeView.classList.add('hidden');
+        initAttendance3LinesChart();
+      }
+    });
+
+    function initAttendance3LinesChart() {
+      const ctx = document.getElementById('attendance3LinesChart');
+      if (!ctx) return;
+
+      const labels = ['1 Okt', '2 Okt', '5 Okt', '6 Okt', '7 Okt', '8 Okt', '9 Okt', '12 Okt', '13 Okt', '14 Okt', '15 Okt', '16 Okt'];
+      const totalKaryawan = [20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20];
+      const masuk = [19, 18, 20, 19, 18, 19, 20, 18, 19, 20, 19, 18];
+      const tidakMasuk = [1, 2, 0, 1, 2, 1, 0, 2, 1, 0, 1, 2];
+
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Total Karyawan',
+              data: totalKaryawan,
+              borderColor: '#567364',
+              backgroundColor: 'transparent',
+              borderWidth: 2,
+              borderDash: [5, 5],
+              tension: 0.1,
+              pointRadius: 3
+            },
+            {
+              label: 'Masuk (Hadir)',
+              data: masuk,
+              borderColor: '#0D6840',
+              backgroundColor: 'rgba(13, 104, 64, 0.08)',
+              fill: true,
+              borderWidth: 2.5,
+              tension: 0.3,
+              pointRadius: 4,
+              pointHoverRadius: 6
+            },
+            {
+              label: 'Tidak Masuk',
+              data: tidakMasuk,
+              borderColor: '#D97706',
+              backgroundColor: 'transparent',
+              borderWidth: 2,
+              tension: 0.3,
+              pointRadius: 4,
+              pointHoverRadius: 6
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              mode: 'index',
+              intersect: false,
+              backgroundColor: '#0D6840',
+              titleColor: '#ffffff',
+              bodyColor: '#DDF2E4',
+              borderColor: '#D5E7DC',
+              borderWidth: 1,
+              padding: 10
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 22,
+              ticks: { stepSize: 5, color: '#567364', font: { size: 11 } },
+              grid: { color: 'rgba(213, 231, 220, 0.6)' }
+            },
+            x: {
+              ticks: { color: '#567364', font: { size: 11 } },
+              grid: { display: false }
+            }
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>

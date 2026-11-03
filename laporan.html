@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laporan & Audit - Upajiwa Enterprise</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#E8F4EC] text-[#334D40] min-h-screen flex">
+
+  <!-- Mobile Drawer Container -->
+  <div id="mobile-drawer"></div>
+
+  <!-- Desktop Floating Sidebar (Deep Emerald #0D6840) -->
+  <aside id="desktop-sidebar" class="hidden md:block w-64 flex-shrink-0 min-h-screen sticky top-0"></aside>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col min-w-0 min-h-screen">
+    <!-- Topbar (Floating Emerald Bar) -->
+    <header id="topbar"></header>
+
+    <!-- Page Content Container -->
+    <main class="flex-1 px-4 sm:px-6 lg:px-8 py-6 max-w-7xl w-full mx-auto space-y-6">
+
+      <!-- Header Section -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 class="font-heading font-black text-2xl sm:text-3xl text-[#13231B] tracking-tight">Laporan & Audit Eksekutif</h1>
+          <p class="text-xs sm:text-sm text-[#567364] mt-1">Analisis agregat kompensasi, rekap presensi tahunan, dan ekspor spreadsheet terstruktur ber-freeze panes.</p>
+        </div>
+
+        <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+          <button id="btn-export-active" onclick="exportActiveTabExcel()" class="px-4 py-2.5 bg-[#0D6840] hover:bg-[#094F30] text-white text-xs sm:text-sm font-bold rounded-2xl flex items-center gap-2 transition-all shadow-md shadow-[#0D6840]/20">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <span id="export-btn-label">Export Excel Matriks (Freeze Panes)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Ringkasan Finansial Tahunan Bento -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+        <div class="bg-white p-6 rounded-3xl border border-[#D5E7DC] shadow-xs">
+          <span class="text-xs font-bold text-[#567364] uppercase tracking-wider block">Total Pengeluaran Gaji 12 Bulan</span>
+          <span class="font-heading font-black text-2xl sm:text-3xl text-[#13231B] font-mono mt-1 block">Rp 2.874.000.000</span>
+          <span class="text-xs text-[#0D6840] font-bold mt-1 block">&uarr; 4.2% YoY seiring rekrutmen tim</span>
+        </div>
+        <div class="bg-white p-6 rounded-3xl border border-[#D5E7DC] shadow-xs">
+          <span class="text-xs font-bold text-[#567364] uppercase tracking-wider block">Rata-rata Tingkat Kehadiran</span>
+          <span class="font-heading font-black text-2xl sm:text-3xl text-[#0D6840] font-mono mt-1 block">97.6%</span>
+          <span class="text-xs text-[#567364] mt-1 block">Total 264 Hari Kerja Efektif</span>
+        </div>
+        <div class="bg-white p-6 rounded-3xl border border-[#D5E7DC] shadow-xs">
+          <span class="text-xs font-bold text-[#567364] uppercase tracking-wider block">Kepatuhan Pajak & BPJS</span>
+          <span class="font-heading font-black text-2xl sm:text-3xl text-[#10B981] font-mono mt-1 block">100%</span>
+          <span class="text-xs text-[#567364] mt-1 block">Tervalidasi Format DJP e-Bupot</span>
+        </div>
+      </div>
+
+      <!-- Grafik Tren Pengeluaran Payroll Tahunan -->
+      <div class="bg-white p-6 sm:p-8 rounded-3xl border border-[#D5E7DC] shadow-xs">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="font-heading font-black text-lg text-[#13231B]">Tren Beban Payroll 12 Bulan (Nov 2025 - Okt 2026)</h2>
+            <p class="text-xs text-[#567364]">Total nominal penggajian bersih (THP) yang ditransfer per bulan.</p>
+          </div>
+          <span class="text-xs font-bold text-[#0D6840] font-mono bg-[#DDF2E4] px-3 py-1 rounded-xl">Satuan: Juta Rupiah</span>
+        </div>
+        <div class="h-64 w-full">
+          <canvas id="annualPayrollChart"></canvas>
+        </div>
+      </div>
+
+      <!-- TAB SECTION LAPORAN SESUAI ARAHAN POIN 8 USER -->
+      <div class="bg-white rounded-3xl border border-[#D5E7DC] shadow-xs overflow-hidden">
+        <!-- Tab Bar -->
+        <div class="flex border-b border-[#D5E7DC] px-4 sm:px-6 pt-3 bg-[#F4F9F5]">
+          <button id="tab-btn-laporan-payroll" onclick="switchLaporanTab('payroll')" class="py-3 px-5 font-heading font-bold text-xs sm:text-sm border-b-2 border-[#0D6840] text-[#0D6840] flex items-center gap-2 transition-all">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+            </svg>
+            <span>Matriks Payroll 12 Bulan (Per Pegawai)</span>
+          </button>
+          <button id="tab-btn-laporan-absensi" onclick="switchLaporanTab('absensi')" class="py-3 px-5 font-heading font-bold text-xs sm:text-sm border-b-2 border-transparent text-[#567364] hover:text-[#13231B] flex items-center gap-2 transition-all">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+            </svg>
+            <span>Rekapitulasi Presensi Tahunan (Per Departemen)</span>
+          </button>
+        </div>
+
+        <!-- TAB 1 CONTENT: MATRIKS PAYROLL 12 BULAN -->
+        <div id="tab-laporan-payroll" class="p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="font-heading font-black text-base text-[#13231B]">Matriks Gaji 12 Bulan Seluruh Karyawan</h3>
+              <p class="text-xs text-[#567364]">Tampilan matriks nominal THP per karyawan selama siklus 1 tahun.</p>
+            </div>
+            <button onclick="exportPayrollMatrixExcel()" class="text-xs font-bold text-[#0D6840] hover:underline flex items-center gap-1">
+              <span>Unduh .XLSX (Freeze Panes)</span> &rarr;
+            </button>
+          </div>
+
+          <!-- Desktop Table Matriks Payroll (>= 768px) -->
+          <div class="hidden md:block overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="border-b border-[#D5E7DC] bg-[#F4F9F5] text-[#567364] uppercase text-[10px] tracking-wider font-bold">
+                  <th class="py-3.5 px-3 sticky left-0 bg-white z-10">Karyawan (NIP)</th>
+                  <th class="py-3.5 px-3">Departemen</th>
+                  <th class="py-3.5 px-2">Nov 25</th>
+                  <th class="py-3.5 px-2">Des 25</th>
+                  <th class="py-3.5 px-2">Jan 26</th>
+                  <th class="py-3.5 px-2">Feb 26</th>
+                  <th class="py-3.5 px-2">Mar 26</th>
+                  <th class="py-3.5 px-2">Apr 26</th>
+                  <th class="py-3.5 px-2">Mei 26</th>
+                  <th class="py-3.5 px-2">Jun 26</th>
+                  <th class="py-3.5 px-2">Jul 26</th>
+                  <th class="py-3.5 px-2">Agu 26</th>
+                  <th class="py-3.5 px-2">Sep 26</th>
+                  <th class="py-3.5 px-2">Okt 26</th>
+                  <th class="py-3.5 px-3 text-right">Total 12 Bulan</th>
+                </tr>
+              </thead>
+              <tbody id="matrix-payroll-tbody" class="divide-y divide-[#E8F4EC] text-[#334D40] font-mono">
+                <!-- Rendered via JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Mobile Card List View Matriks Payroll (< 768px) -->
+          <div id="matrix-payroll-card-list" class="block md:hidden space-y-3">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+
+        <!-- TAB 2 CONTENT: REKAP PRESENSI TAHUNAN -->
+        <div id="tab-laporan-absensi" class="p-6 hidden">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="font-heading font-black text-base text-[#13231B]">Rekapitulasi Kehadiran Tahunan per Departemen</h3>
+              <p class="text-xs text-[#567364]">Total hari kerja, jam lembur, dan absensi per divisi operasional.</p>
+            </div>
+            <button onclick="exportAttendanceSummaryExcel()" class="text-xs font-bold text-[#0D6840] hover:underline flex items-center gap-1">
+              <span>Unduh Rekap .XLSX</span> &rarr;
+            </button>
+          </div>
+
+          <!-- Desktop Table Presensi (>= 768px) -->
+          <div class="hidden md:block overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs sm:text-sm">
+              <thead>
+                <tr class="border-b border-[#D5E7DC] bg-[#F4F9F5] text-[#567364] uppercase text-[11px] font-bold">
+                  <th class="py-4 px-5">Departemen</th>
+                  <th class="py-4 px-4">Jumlah Staf</th>
+                  <th class="py-4 px-4">Hari Kerja Efektif</th>
+                  <th class="py-4 px-4">Total Kehadiran</th>
+                  <th class="py-4 px-4">Terlambat</th>
+                  <th class="py-4 px-4">Izin / Sakit</th>
+                  <th class="py-4 px-5 text-right">Persentase</th>
+                </tr>
+              </thead>
+              <tbody id="summary-absensi-tbody" class="divide-y divide-[#E8F4EC] text-[#334D40]">
+                <!-- Rendered via JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Mobile Card List View Presensi (< 768px) -->
+          <div id="summary-absensi-card-list" class="block md:hidden space-y-3">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <script src="mock-data.js"></script>
+  <script src="layout.js"></script>
+  <script>
+    let employees = [];
+    let currentLaporanTab = 'payroll';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initAppShell('laporan');
+      employees = getLocalEmployees();
+
+      initAnnualPayrollChart();
+      renderMatrixPayrollTable(employees);
+      renderSummaryAbsensiTable();
+    });
+
+    function switchLaporanTab(tab) {
+      currentLaporanTab = tab;
+      const tabPayroll = document.getElementById('tab-laporan-payroll');
+      const tabAbsensi = document.getElementById('tab-laporan-absensi');
+      const btnPayroll = document.getElementById('tab-btn-laporan-payroll');
+      const btnAbsensi = document.getElementById('tab-btn-laporan-absensi');
+      const exportLabel = document.getElementById('export-btn-label');
+
+      if (tab === 'payroll') {
+        tabPayroll.classList.remove('hidden');
+        tabAbsensi.classList.add('hidden');
+        btnPayroll.className = 'py-3 px-5 font-heading font-bold text-xs sm:text-sm border-b-2 border-[#0D6840] text-[#0D6840] flex items-center gap-2 transition-all';
+        btnAbsensi.className = 'py-3 px-5 font-heading font-bold text-xs sm:text-sm border-b-2 border-transparent text-[#567364] hover:text-[#13231B] flex items-center gap-2 transition-all';
+        exportLabel.textContent = 'Export Excel Matriks (Freeze Panes)';
+      } else {
+        tabPayroll.classList.add('hidden');
+        tabAbsensi.classList.remove('hidden');
+        btnAbsensi.className = 'py-3 px-5 font-heading font-bold text-xs sm:text-sm border-b-2 border-[#0D6840] text-[#0D6840] flex items-center gap-2 transition-all';
+        btnPayroll.className = 'py-3 px-5 font-heading font-bold text-xs sm:text-sm border-b-2 border-transparent text-[#567364] hover:text-[#13231B] flex items-center gap-2 transition-all';
+        exportLabel.textContent = 'Export Excel Rekap Presensi Tahunan';
+      }
+    }
+
+    function initAnnualPayrollChart() {
+      const ctx = document.getElementById('annualPayrollChart');
+      if (!ctx) return;
+
+      const labels = ['Nov 25', 'Des 25', 'Jan 26', 'Feb 26', 'Mar 26', 'Apr 26', 'Mei 26', 'Jun 26', 'Jul 26', 'Agu 26', 'Sep 26', 'Okt 26'];
+      const dataValues = [228, 230, 232, 233, 235, 235, 237, 237, 238, 239, 239.5, 239.5];
+
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Total THP Gaji (Juta Rp)',
+            data: dataValues,
+            backgroundColor: '#0D6840',
+            borderRadius: 8,
+            barThickness: 22
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(c) { return `Rp ${c.raw} Juta`; }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: false,
+              min: 200,
+              ticks: { color: '#567364', font: { size: 10 } },
+              grid: { color: 'rgba(213, 231, 220, 0.6)' }
+            },
+            x: {
+              ticks: { color: '#567364', font: { size: 10 } },
+              grid: { display: false }
+            }
+          }
+        }
+      });
+    }
+
+    function renderMatrixPayrollTable(list) {
+      const tbody = document.getElementById('matrix-payroll-tbody');
+      const cardList = document.getElementById('matrix-payroll-card-list');
+
+      tbody.innerHTML = list.map(emp => {
+        const thp = (emp.gajiPokok || 10000000) + (emp.tunjangan || 2000000) - (emp.potongan || 300000);
+        const thpJuta = (thp / 1000000).toFixed(1);
+        const total12 = (thp * 12);
+
+        return `
+          <tr class="hover:bg-[#F4F9F5] transition-colors">
+            <td class="py-3 px-3 sticky left-0 bg-white z-10 font-sans font-bold text-[#13231B]">
+              <a href="detail-pegawai.html?id=${emp.id}" class="hover:text-[#0D6840]">${emp.nama}</a>
+              <span class="block text-[10px] text-[#567364] font-mono">${emp.id}</span>
+            </td>
+            <td class="py-3 px-3 font-sans text-[#567364] text-[11px]">${emp.departemen}</td>
+            <td class="py-3 px-2">${thpJuta}M</td>
+            <td class="py-3 px-2">${thpJuta}M</td>
+            <td class="py-3 px-2">${thpJuta}M</td>
+            <td class="py-3 px-2">${thpJuta}M</td>
+            <td class="py-3 px-2">${thpJuta}M</td>
+            <td class="py-3 px-2">${thpJuta}M</td>
+            <td class="py-3 px-2">${thpJuta}M</td>
+            <td class="py-3 px-2">${thpJuta}M</td>
+            <td class="py-3 px-2">${thpJuta}M</td>
+            <td class="py-3 px-2">${thpJuta}M</td>
+            <td class="py-3 px-2">${thpJuta}M</td>
+            <td class="py-3 px-2 font-bold text-[#0D6840]">${thpJuta}M</td>
+            <td class="py-3 px-3 text-right font-black text-[#0D6840]">
+              Rp ${total12.toLocaleString('id-ID')}
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      cardList.innerHTML = list.map(emp => {
+        const thp = (emp.gajiPokok || 10000000) + (emp.tunjangan || 2000000) - (emp.potongan || 300000);
+        const total12 = (thp * 12);
+
+        return `
+          <div class="bg-white p-5 rounded-3xl border border-[#D5E7DC] shadow-xs space-y-2">
+            <div class="flex items-center justify-between">
+              <div>
+                <a href="detail-pegawai.html?id=${emp.id}" class="font-heading font-bold text-sm text-[#13231B]">
+                  ${emp.nama}
+                </a>
+                <span class="block text-xs text-[#567364] font-mono">${emp.id} &bull; ${emp.departemen}</span>
+              </div>
+              <span class="text-xs font-mono font-bold text-[#0D6840] bg-[#DDF2E4] px-2.5 py-1 rounded-xl">
+                Rp ${(thp / 1000000).toFixed(1)} Jt / Bln
+              </span>
+            </div>
+            <div class="flex items-center justify-between pt-2 border-t border-[#E8F4EC] text-xs">
+              <span class="text-[#567364]">Akumulasi Gaji 12 Bulan:</span>
+              <span class="font-mono font-black text-[#13231B]">Rp ${total12.toLocaleString('id-ID')}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderSummaryAbsensiTable() {
+      const tbody = document.getElementById('summary-absensi-tbody');
+      const cardList = document.getElementById('summary-absensi-card-list');
+
+      const deptData = [
+        { nama: 'Teknologi', staf: 8, efektif: 2112, hadir: 2070, telat: 14, izin: 28, pct: '98.0%' },
+        { nama: 'Finance & Accounting', staf: 3, efektif: 792, hadir: 778, telat: 5, izin: 9, pct: '98.2%' },
+        { nama: 'Human Resources', staf: 3, efektif: 792, hadir: 775, telat: 4, izin: 13, pct: '97.8%' },
+        { nama: 'Marketing & Sales', staf: 3, efektif: 792, hadir: 765, telat: 11, izin: 16, pct: '96.5%' },
+        { nama: 'Operasional', staf: 3, efektif: 792, hadir: 772, telat: 8, izin: 12, pct: '97.4%' }
+      ];
+
+      tbody.innerHTML = deptData.map(d => `
+        <tr class="hover:bg-[#F4F9F5] transition-colors">
+          <td class="py-3.5 px-5 font-bold text-[#13231B]">${d.nama}</td>
+          <td class="py-3.5 px-4">${d.staf} Orang</td>
+          <td class="py-3.5 px-4 font-mono font-medium">${d.efektif} Hari</td>
+          <td class="py-3.5 px-4 font-mono font-bold text-[#0D6840]">${d.hadir} Hari</td>
+          <td class="py-3.5 px-4 font-mono text-[#D97706] font-semibold">${d.telat} Kali</td>
+          <td class="py-3.5 px-4 font-mono text-[#567364]">${d.izin} Hari</td>
+          <td class="py-3.5 px-5 text-right">
+            <span class="inline-block px-3 py-1 rounded-xl font-mono font-bold text-xs bg-[#DDF2E4] text-[#0D6840] border border-[#0D6840]/20">
+              ${d.pct}
+            </span>
+          </td>
+        </tr>
+      `).join('');
+
+      cardList.innerHTML = deptData.map(d => `
+        <div class="bg-white p-5 rounded-3xl border border-[#D5E7DC] shadow-xs space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-heading font-bold text-sm text-[#13231B]">${d.nama}</span>
+            <span class="px-2.5 py-0.5 rounded-full font-mono font-bold text-xs bg-[#DDF2E4] text-[#0D6840]">
+              ${d.pct}
+            </span>
+          </div>
+          <div class="grid grid-cols-3 gap-2 text-xs text-[#567364] py-1">
+            <div>
+              <span class="text-[#567364] block text-[10px]">Staf & Efektif</span>
+              <span class="font-bold text-[#13231B]">${d.staf} org (${d.efektif} h)</span>
+            </div>
+            <div>
+              <span class="text-[#567364] block text-[10px]">Kehadiran</span>
+              <span class="font-bold text-[#0D6840]">${d.hadir} Hari</span>
+            </div>
+            <div>
+              <span class="text-[#567364] block text-[10px]">Terlambat</span>
+              <span class="font-bold text-[#D97706]">${d.telat} Kali</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function exportActiveTabExcel() {
+      if (currentLaporanTab === 'payroll') {
+        exportPayrollMatrixExcel();
+      } else {
+        exportAttendanceSummaryExcel();
+      }
+    }
+
+    function exportPayrollMatrixExcel() {
+      if (typeof XLSX === 'undefined') {
+        showToast('Library SheetJS XLSX sedang dimuat...', 'error');
+        return;
+      }
+
+      const headers = ['NIP', 'Nama Karyawan', 'Departemen', 'Nov 25', 'Des 25', 'Jan 26', 'Feb 26', 'Mar 26', 'Apr 26', 'Mei 26', 'Jun 26', 'Jul 26', 'Agu 26', 'Sep 26', 'Okt 26', 'Total 12 Bulan (Rp)'];
+      const rows = [headers];
+
+      employees.forEach(emp => {
+        const thp = (emp.gajiPokok || 10000000) + (emp.tunjangan || 2000000) - (emp.potongan || 300000);
+        const row = [
+          emp.id,
+          emp.nama,
+          emp.departemen,
+          thp, thp, thp, thp, thp, thp, thp, thp, thp, thp, thp, thp,
+          thp * 12
+        ];
+        rows.push(row);
+      });
+
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+
+      ws['!freeze'] = {
+        xSplit: 2,
+        ySplit: 1,
+        topLeftCell: 'C2',
+        activePane: 'bottomRight',
+        state: 'frozen'
+      };
+
+      ws['!cols'] = [
+        { wch: 10 }, { wch: 25 }, { wch: 20 },
+        { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 14 },
+        { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 14 },
+        { wch: 20 }
+      ];
+
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Matriks Payroll 12 Bulan');
+      XLSX.writeFile(wb, 'Upajiwa_Matriks_Payroll_12Bulan_FreezePanes.xlsx');
+
+      showToast('Matriks Payroll berhasil diekspor dengan Freeze Panes!', 'success');
+    }
+
+    function exportAttendanceSummaryExcel() {
+      if (typeof XLSX === 'undefined') return;
+
+      const rows = [
+        ['Departemen', 'Jumlah Staf', 'Hari Kerja Efektif', 'Total Kehadiran', 'Terlambat', 'Izin/Sakit', 'Persentase Kehadiran'],
+        ['Teknologi', 8, 2112, 2070, 14, 28, '98.0%'],
+        ['Finance & Accounting', 3, 792, 778, 5, 9, '98.2%'],
+        ['Human Resources', 3, 792, 775, 4, 13, '97.8%'],
+        ['Marketing & Sales', 3, 792, 765, 11, 16, '96.5%'],
+        ['Operasional', 3, 792, 772, 8, 12, '97.4%']
+      ];
+
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      ws['!freeze'] = { xSplit: 1, ySplit: 1, topLeftCell: 'B2', activePane: 'bottomRight', state: 'frozen' };
+      ws['!cols'] = [{ wch: 22 }, { wch: 12 }, { wch: 18 }, { wch: 16 }, { wch: 12 }, { wch: 12 }, { wch: 18 }];
+
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Rekap Presensi Tahunan');
+      XLSX.writeFile(wb, 'Upajiwa_Rekap_Presensi_Tahunan.xlsx');
+
+      showToast('Rekapitulasi Presensi Tahunan berhasil diekspor!', 'success');
+    }
+  </script>
+</body>
+</html>

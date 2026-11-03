@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payroll & Gaji - Upajiwa Enterprise</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#E8F4EC] text-[#334D40] min-h-screen flex">
+
+  <!-- Mobile Drawer Container -->
+  <div id="mobile-drawer"></div>
+
+  <!-- Desktop Floating Sidebar (Deep Emerald #0D6840) -->
+  <aside id="desktop-sidebar" class="hidden md:block w-64 flex-shrink-0 min-h-screen sticky top-0"></aside>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col min-w-0 min-h-screen">
+    <!-- Topbar (Floating Emerald Bar) -->
+    <header id="topbar"></header>
+
+    <!-- Page Content Container -->
+    <main class="flex-1 px-4 sm:px-6 lg:px-8 py-6 max-w-7xl w-full mx-auto space-y-6">
+
+      <!-- Header Payroll & Kunci / Terbitkan Toolbar -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2.5">
+            <h1 class="font-heading font-black text-2xl sm:text-3xl text-[#13231B] tracking-tight">Kalkulasi Payroll & Gaji</h1>
+            <span id="payroll-status-pill" class="px-3 py-1 rounded-full text-xs font-bold border flex items-center gap-1.5 bg-[#DDF2E4] text-[#0D6840] border-[#0D6840]/20">
+              <span class="w-2 h-2 rounded-full bg-[#0D6840]"></span>
+              <span>Terbuka (Dapat Diedit)</span>
+            </span>
+          </div>
+          <p class="text-xs sm:text-sm text-[#567364] mt-1">Otomasi perhitungan gaji pokok, tunjangan, potongan dinamis, dan distribusi slip gaji resmi A4.</p>
+        </div>
+
+        <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+          <!-- Button Import CSV Payroll -->
+          <button id="btn-import-csv" onclick="openImportCsvPayrollModal()" class="px-3.5 py-2.5 bg-white hover:bg-[#DDF2E4] text-[#0D6840] text-xs sm:text-sm font-bold rounded-2xl flex items-center gap-2 transition-colors border border-[#D5E7DC] shadow-xs">
+            <svg class="w-4 h-4 text-[#0D6840]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+            </svg>
+            <span>Import CSV</span>
+          </button>
+
+          <!-- Button Terbitkan Semua Sekaligus / Langsung Terbitkan -->
+          <button id="btn-publish-all" onclick="publishAllPayroll()" class="px-4 py-2.5 bg-[#0D6840] hover:bg-[#094F30] text-white text-xs sm:text-sm font-bold rounded-2xl flex items-center gap-2 transition-all shadow-md shadow-[#0D6840]/20">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+            </svg>
+            <span>Terbitkan Semua Sekaligus</span>
+          </button>
+
+          <!-- Button Kunci / Buka Kunci Payroll -->
+          <button id="btn-lock-toggle" onclick="toggleLockPayroll()" class="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-900 text-xs sm:text-sm font-bold rounded-2xl flex items-center gap-2 transition-all shadow-md">
+            <svg id="lock-icon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+            </svg>
+            <span id="lock-btn-text">Kunci Payroll Bulan Ini</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Banner Status Terkunci (Tampil jika locked) -->
+      <div id="locked-banner" class="hidden p-4 bg-amber-50 border-2 border-amber-300 rounded-2xl flex items-center justify-between text-xs sm:text-sm text-amber-900">
+        <div class="flex items-center gap-3">
+          <span class="p-2 bg-amber-200 rounded-xl text-amber-800">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+            </svg>
+          </span>
+          <div>
+            <strong class="font-bold">Periode Payroll Telah Dikunci (Final)</strong>
+            <p class="text-xs text-amber-800/80">Seluruh komponen gaji dan potongan terlindungi dari pengubahan. Buka kunci untuk melakukan koreksi.</p>
+          </div>
+        </div>
+        <button onclick="toggleLockPayroll()" class="px-3 py-1.5 bg-white border border-amber-300 rounded-xl font-bold text-xs text-amber-800 hover:bg-amber-100 shadow-2xs">
+          Buka Kunci
+        </button>
+      </div>
+
+      <!-- Ringkasan Finansial Payroll Card Bento -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div class="bg-white p-6 rounded-3xl border border-[#D5E7DC] shadow-xs">
+          <span class="text-xs font-bold text-[#567364] uppercase tracking-wider block">Total Gaji Pokok</span>
+          <span class="font-heading font-black text-2xl sm:text-3xl text-[#13231B] font-mono mt-1 block" id="total-gaji-pokok">Rp 210.000.000</span>
+          <span class="text-xs text-[#567364] mt-1 block">Untuk 20 Karyawan Aktif</span>
+        </div>
+
+        <div class="bg-white p-6 rounded-3xl border border-[#D5E7DC] shadow-xs">
+          <span class="text-xs font-bold text-[#567364] uppercase tracking-wider block">Total Tunjangan</span>
+          <span class="font-heading font-black text-2xl sm:text-3xl text-[#0D6840] font-mono mt-1 block" id="total-tunjangan">+Rp 36.500.000</span>
+          <span class="text-xs text-[#567364] mt-1 block">Operasional & Jabatan</span>
+        </div>
+
+        <div class="bg-white p-6 rounded-3xl border border-[#D5E7DC] shadow-xs">
+          <span class="text-xs font-bold text-[#567364] uppercase tracking-wider block">Total Potongan (BPJS + PPh + Lainnya)</span>
+          <span class="font-heading font-black text-2xl sm:text-3xl text-rose-600 font-mono mt-1 block" id="total-potongan">-Rp 7.000.000</span>
+          <span class="text-xs text-[#567364] mt-1 block">Dapat Diedit & Ditambah per Karyawan</span>
+        </div>
+
+        <div class="bg-[#0D6840] text-white p-6 rounded-3xl shadow-md shadow-[#0D6840]/20">
+          <span class="text-xs font-bold text-emerald-200 uppercase tracking-wider block">Total THP (Pengeluaran Bersih)</span>
+          <span class="font-heading font-black text-2xl sm:text-3xl font-mono mt-1 block" id="total-thp">Rp 239.500.000</span>
+          <span class="text-xs text-emerald-100 mt-1 block">Disbursement Siap Eksekusi</span>
+        </div>
+      </div>
+
+      <!-- DESKTOP TABLE VIEW PAYROLL (>= 768px) -->
+      <div class="hidden md:block bg-white rounded-3xl border border-[#D5E7DC] shadow-xs overflow-hidden">
+        <table class="w-full text-left border-collapse text-xs sm:text-sm">
+          <thead>
+            <tr class="border-b border-[#D5E7DC] bg-[#F4F9F5] text-[#567364] font-bold uppercase text-[11px] tracking-wider">
+              <th class="py-4 px-5">Karyawan</th>
+              <th class="py-4 px-4">Gaji Pokok</th>
+              <th class="py-4 px-4">Tunjangan</th>
+              <th class="py-4 px-4">Potongan</th>
+              <th class="py-4 px-4">Penerimaan Bersih (THP)</th>
+              <th class="py-4 px-4">Status Slip</th>
+              <th class="py-4 px-5 text-right">Aksi Manajemen</th>
+            </tr>
+          </thead>
+          <tbody id="payroll-table-body" class="divide-y divide-[#E8F4EC] text-[#334D40]">
+            <!-- Rendered via renderPayrollTable() -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- MOBILE CARD LIST VIEW PAYROLL (< 768px) -->
+      <div id="payroll-card-list" class="block md:hidden space-y-3">
+        <!-- Rendered via renderPayrollTable() -->
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Modal Edit Komponen Potongan & Gaji (Bisa Menambah Potongan Dinamis) -->
+  <div id="modal-edit-deductions" style="display: none;" class="fixed inset-0 bg-[#13231B]/75 backdrop-blur-xs z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl border border-[#D5E7DC] my-8 animate-in fade-in zoom-in-95">
+      <div class="flex items-center justify-between pb-3 border-b border-[#D5E7DC] mb-4">
+        <div>
+          <h3 class="font-heading font-black text-lg text-[#13231B]">Edit Komponen Gaji &amp; Potongan</h3>
+          <p class="text-xs text-[#567364]" id="modal-edit-subtitle">Karyawan: Budi Santoso (UP-001)</p>
+        </div>
+        <button onclick="closeEditDeductionsModal()" class="text-[#567364] hover:text-[#13231B] p-1.5 rounded-xl hover:bg-[#E8F4EC]">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <input type="hidden" id="edit-emp-id">
+
+      <div class="space-y-4 text-xs sm:text-sm">
+        <!-- Bagian Pendapatan -->
+        <div class="grid grid-cols-2 gap-3 p-3.5 bg-[#F4F9F5] rounded-2xl border border-[#D5E7DC]">
+          <div>
+            <label class="block font-bold text-[#13231B] mb-1">Gaji Pokok (Rp)</label>
+            <input type="number" id="edit-gaji-pokok" oninput="recalcModalTHP()" step="100000" class="w-full px-3 py-2 bg-white border border-[#D5E7DC] rounded-xl font-mono font-bold text-[#13231B] focus:outline-none focus:border-[#0D6840]">
+          </div>
+          <div>
+            <label class="block font-bold text-[#13231B] mb-1">Total Tunjangan (Rp)</label>
+            <input type="number" id="edit-tunjangan" oninput="recalcModalTHP()" step="50000" class="w-full px-3 py-2 bg-white border border-[#D5E7DC] rounded-xl font-mono font-bold text-[#0D6840] focus:outline-none focus:border-[#0D6840]">
+          </div>
+        </div>
+
+        <!-- Bagian Potongan-potongan Dinamis -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-bold text-[#13231B] text-xs uppercase tracking-wider">Rincian Komponen Potongan:</span>
+            <!-- Tombol Tambah Potongan Baru Dinamis -->
+            <button type="button" onclick="addNewDeductionRow()" class="px-3 py-1.5 bg-[#DDF2E4] hover:bg-emerald-200 text-[#0D6840] font-bold text-xs rounded-xl flex items-center gap-1.5 transition-colors border border-[#0D6840]/20 shadow-2xs">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+              <span>+ Tambah Potongan</span>
+            </button>
+          </div>
+
+          <!-- Dynamic Deduction Rows Container -->
+          <div id="deductions-container" class="space-y-2.5 max-h-56 overflow-y-auto pr-1">
+            <!-- Injected via JS -->
+          </div>
+        </div>
+
+        <!-- Live THP Summary Preview -->
+        <div class="p-4 bg-[#DDF2E4] rounded-2xl border border-[#0D6840]/30 flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold text-[#0D6840] uppercase tracking-wider block">Estimasi Penerimaan Bersih (THP):</span>
+            <span class="text-[11px] text-[#4A6356]" id="modal-thp-formula">Gaji Pokok + Tunjangan - Total Potongan</span>
+          </div>
+          <span class="font-heading font-black text-xl text-[#0D6840] font-mono" id="modal-live-thp">Rp 17.550.000</span>
+        </div>
+
+        <!-- Modal Action Footer -->
+        <div class="pt-3 border-t border-[#D5E7DC] flex justify-end gap-2">
+          <button type="button" onclick="closeEditDeductionsModal()" class="px-4 py-2 border border-[#D5E7DC] rounded-xl hover:bg-[#E8F4EC] text-[#334D40] font-semibold">Batal</button>
+          <button type="button" onclick="saveEmployeeDeductions()" class="px-5 py-2 bg-[#0D6840] hover:bg-[#094F30] text-white rounded-xl font-bold shadow-md">Simpan Perubahan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Import CSV Payroll -->
+  <div id="modal-import-csv-payroll" class="fixed inset-0 bg-[#13231B]/70 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-[#D5E7DC]">
+      <div class="flex items-center justify-between pb-3 border-b border-[#D5E7DC] mb-4">
+        <h3 class="font-heading font-black text-lg text-[#13231B]">Import Komponen Payroll CSV</h3>
+        <button onclick="closeImportCsvPayrollModal()" class="text-[#567364] hover:text-[#13231B]">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="space-y-4 text-xs sm:text-sm">
+        <div class="p-3 bg-[#E8F4EC] border border-[#D5E7DC] rounded-2xl text-[#334D40]">
+          <p class="font-bold text-[#0D6840] mb-1">Header Format Penyesuaian Gaji / Lembur / Bonus CSV:</p>
+          <code class="font-mono text-[11px] block text-[#0D6840]">id,nama,bonus_lembur,potongan_kasbon,catatan</code>
+        </div>
+
+        <div class="border-2 border-dashed border-[#D5E7DC] hover:border-[#0D6840] rounded-3xl p-6 text-center bg-[#F4F9F5] transition-colors">
+          <svg class="w-10 h-10 text-[#567364] mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+          </svg>
+          <label class="cursor-pointer">
+            <span class="text-xs sm:text-sm font-bold text-[#0D6840] hover:underline">Pilih berkas CSV Penyesuaian</span>
+            <input type="file" id="csv-payroll-input" accept=".csv" class="hidden" onchange="handlePayrollCsv(this)">
+          </label>
+          <p class="text-[11px] text-[#567364] mt-1" id="csv-payroll-filename">Maksimal 5MB, format CSV UTF-8</p>
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2">
+          <button onclick="closeImportCsvPayrollModal()" class="px-4 py-2 border border-[#D5E7DC] rounded-xl hover:bg-[#E8F4EC] text-[#334D40] font-semibold">Batal</button>
+          <button id="btn-import-payroll" onclick="executeImportPayroll()" disabled class="px-4 py-2 bg-[#0D6840] hover:bg-[#094F30] disabled:opacity-50 text-white rounded-xl font-bold shadow-md">Terapkan Penyesuaian</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="mock-data.js"></script>
+  <script src="layout.js"></script>
+  <script>
+    const STORAGE_KEY_PUBLISHED = 'upajiwa_payroll_published_emp_ids';
+
+    let employees = [];
+    let publishedEmpIds = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initAppShell('payroll');
+      employees = getLocalEmployees();
+      loadPublishedState();
+      updateLockUI();
+      renderPayrollTable(employees);
+    });
+
+    function loadPublishedState() {
+      try {
+        publishedEmpIds = JSON.parse(localStorage.getItem(STORAGE_KEY_PUBLISHED)) || [];
+      } catch (e) {
+        publishedEmpIds = [];
+      }
+    }
+
+    function savePublishedState() {
+      localStorage.setItem(STORAGE_KEY_PUBLISHED, JSON.stringify(publishedEmpIds));
+    }
+
+    function updateLockUI() {
+      const locked = isPayrollLocked();
+      const pill = document.getElementById('payroll-status-pill');
+      const banner = document.getElementById('locked-banner');
+      const btnLockText = document.getElementById('lock-btn-text');
+      const btnImportCsv = document.getElementById('btn-import-csv');
+      const btnPublishAll = document.getElementById('btn-publish-all');
+
+      if (locked) {
+        pill.className = 'px-3 py-1 rounded-full text-xs font-bold border flex items-center gap-1.5 bg-amber-100 text-[#D97706] border-amber-300';
+        pill.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-500"></span><span>Payroll Terkunci (Hanya Baca)</span>';
+        banner.classList.remove('hidden');
+        btnLockText.textContent = 'Buka Kunci Payroll';
+        btnImportCsv.disabled = true;
+        btnImportCsv.classList.add('opacity-50', 'cursor-not-allowed');
+        btnPublishAll.disabled = true;
+        btnPublishAll.classList.add('opacity-50', 'cursor-not-allowed');
+      } else {
+        pill.className = 'px-3 py-1 rounded-full text-xs font-bold border flex items-center gap-1.5 bg-[#DDF2E4] text-[#0D6840] border-[#0D6840]/20';
+        pill.innerHTML = '<span class="w-2 h-2 rounded-full bg-[#0D6840]"></span><span>Terbuka (Dapat Diedit)</span>';
+        banner.classList.add('hidden');
+        btnLockText.textContent = 'Kunci Payroll Bulan Ini';
+        btnImportCsv.disabled = false;
+        btnImportCsv.classList.remove('opacity-50', 'cursor-not-allowed');
+        btnPublishAll.disabled = false;
+        btnPublishAll.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+    }
+
+    function toggleLockPayroll() {
+      const currentlyLocked = isPayrollLocked();
+      if (!currentlyLocked) {
+        showConfirmDialog(
+          'Kunci Payroll Periode Ini?',
+          'Ketika payroll dikunci, seluruh komponen potongan dan nominal gaji tidak dapat diedit lagi untuk menjaga kepatuhan dan audit transfer.',
+          'Ya, Kunci Payroll',
+          false,
+          () => {
+            setPayrollLocked(true);
+            updateLockUI();
+            renderPayrollTable(employees);
+            showToast('Payroll berhasil dikunci! Data tidak dapat diubah.', 'success');
+          }
+        );
+      } else {
+        showConfirmDialog(
+          'Buka Kunci Payroll?',
+          'Membuka kunci payroll akan memungkinkan modifikasi kembali terhadap potongan dan komponen gaji karyawan.',
+          'Buka Kunci',
+          false,
+          () => {
+            setPayrollLocked(false);
+            updateLockUI();
+            renderPayrollTable(employees);
+            showToast('Kunci payroll dibuka. Komponen kini dapat diedit kembali.', 'success');
+          }
+        );
+      }
+    }
+
+    // 1. TERBITKAN PAYROLL PER USER
+    window.publishSinglePayroll = function(empId, empNama) {
+      if (isPayrollLocked()) {
+        showToast('Payroll sedang terkunci! Tidak dapat mengubah status.', 'error');
+        return;
+      }
+
+      if (!publishedEmpIds.includes(empId)) {
+        publishedEmpIds.push(empId);
+        savePublishedState();
+        renderPayrollTable(employees);
+        showToast(`Slip gaji ${empNama} (${empId}) berhasil diterbitkan!`, 'success');
+      }
+    };
+
+    // 2. LANGSUNG TERBITKAN SEMUA SEKALIGUS
+    window.publishAllPayroll = function() {
+      if (isPayrollLocked()) {
+        showToast('Payroll sedang terkunci!', 'error');
+        return;
+      }
+
+      showConfirmDialog(
+        'Terbitkan Semua Slip Gaji?',
+        `Tindakan ini akan langsung menerbitkan slip gaji untuk seluruh ${employees.length} karyawan dan mengirimkannya ke portal mandiri masing-masing.`,
+        'Terbitkan Semua Sekarang',
+        false,
+        () => {
+          publishedEmpIds = employees.map(e => e.id);
+          savePublishedState();
+          renderPayrollTable(employees);
+          showToast(`Seluruh slip gaji (${employees.length} karyawan) berhasil diterbitkan!`, 'success');
+        }
+      );
+    };
+
+    function renderPayrollTable(list) {
+      const tbody = document.getElementById('payroll-table-body');
+      const cardList = document.getElementById('payroll-card-list');
+      const locked = isPayrollLocked();
+      const customMap = getPayrollCustomData();
+
+      let sumPokok = 0;
+      let sumTunjangan = 0;
+      let sumPotongan = 0;
+
+      tbody.innerHTML = list.map(emp => {
+        const custom = customMap[emp.id] || null;
+        const pokok = custom ? custom.gajiPokok : (emp.gajiPokok || 10000000);
+        const tunjangan = custom ? custom.tunjangan : (emp.tunjangan || Math.round(pokok * 0.2));
+        
+        let potongan = 0;
+        if (custom && custom.potonganItems) {
+          potongan = custom.potonganItems.reduce((acc, cur) => acc + (parseInt(cur.nominal, 10) || 0), 0);
+        } else {
+          potongan = emp.potongan || Math.round(pokok * 0.03);
+        }
+
+        const thp = pokok + tunjangan - potongan;
+        const isPublished = publishedEmpIds.includes(emp.id);
+
+        sumPokok += pokok;
+        sumTunjangan += tunjangan;
+        sumPotongan += potongan;
+
+        return `
+          <tr class="hover:bg-[#F4F9F5] transition-colors">
+            <td class="py-3.5 px-5">
+              <a href="detail-pegawai.html?id=${emp.id}" class="font-bold text-[#13231B] hover:text-[#0D6840]">
+                ${emp.nama}
+              </a>
+              <span class="block text-xs text-[#567364] font-mono">${emp.id} &bull; ${emp.jabatan}</span>
+            </td>
+            <td class="py-3.5 px-4 font-mono font-medium">Rp ${pokok.toLocaleString('id-ID')}</td>
+            <td class="py-3.5 px-4 font-mono text-[#0D6840] font-semibold">+Rp ${tunjangan.toLocaleString('id-ID')}</td>
+            <td class="py-3.5 px-4 font-mono text-rose-500 font-medium">
+              -Rp ${potongan.toLocaleString('id-ID')}
+              ${custom ? '<span class="text-[10px] text-amber-600 block font-sans font-semibold">(kustom)</span>' : ''}
+            </td>
+            <td class="py-3.5 px-4 font-mono font-black text-[#0D6840]">Rp ${thp.toLocaleString('id-ID')}</td>
+            <td class="py-3.5 px-4">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                isPublished 
+                  ? 'bg-[#DDF2E4] text-[#0D6840] border border-[#0D6840]/20' 
+                  : 'bg-slate-100 text-slate-600 border border-slate-300'
+              }">
+                ${isPublished ? '● Diterbitkan' : 'Draft'}
+              </span>
+            </td>
+            <td class="py-3.5 px-5 text-right">
+              <div class="flex items-center justify-end gap-2">
+                <!-- Tombol Edit Potongan -->
+                <button type="button" onclick="openEditDeductionsModal('${emp.id}')" class="px-2.5 py-1.5 bg-[#F4F9F5] hover:bg-[#E8F4EC] text-[#13231B] border border-[#D5E7DC] rounded-xl text-xs font-bold inline-flex items-center gap-1 transition-colors cursor-pointer">
+                  <svg class="w-3.5 h-3.5 text-[#567364]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                  </svg>
+                  <span>Edit Potongan</span>
+                </button>
+
+                <!-- Tombol Terbitkan Per User -->
+                ${!isPublished ? `
+                  <button type="button" onclick="publishSinglePayroll('${emp.id}', '${emp.nama}')" class="px-2.5 py-1.5 bg-[#0D6840] hover:bg-[#094F30] text-white rounded-xl text-xs font-bold transition-colors shadow-2xs cursor-pointer">
+                    Terbitkan
+                  </button>
+                ` : `
+                  <button type="button" onclick="openPayslipModalById('${emp.id}', 'Oktober 2026')" class="px-2.5 py-1.5 bg-[#E8F4EC] hover:bg-[#DDF2E4] text-[#0D6840] rounded-xl text-xs font-bold inline-flex items-center gap-1 transition-colors border border-[#D5E7DC] cursor-pointer">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    <span>Slip (A4)</span>
+                  </button>
+                `}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      // Mobile Card List View
+      cardList.innerHTML = list.map(emp => {
+        const custom = customMap[emp.id] || null;
+        const pokok = custom ? custom.gajiPokok : (emp.gajiPokok || 10000000);
+        const tunjangan = custom ? custom.tunjangan : (emp.tunjangan || Math.round(pokok * 0.2));
+        
+        let potongan = 0;
+        if (custom && custom.potonganItems) {
+          potongan = custom.potonganItems.reduce((acc, cur) => acc + (parseInt(cur.nominal, 10) || 0), 0);
+        } else {
+          potongan = emp.potongan || Math.round(pokok * 0.03);
+        }
+
+        const thp = pokok + tunjangan - potongan;
+        const isPublished = publishedEmpIds.includes(emp.id);
+
+        return `
+          <div class="bg-white p-5 rounded-3xl border border-[#D5E7DC] shadow-xs space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <a href="detail-pegawai.html?id=${emp.id}" class="font-heading font-bold text-sm text-[#13231B]">
+                  ${emp.nama}
+                </a>
+                <span class="block text-xs text-[#567364] font-mono">${emp.id} &bull; ${emp.departemen}</span>
+              </div>
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                isPublished ? 'bg-[#DDF2E4] text-[#0D6840]' : 'bg-slate-100 text-slate-600'
+              }">
+                ${isPublished ? 'Diterbitkan' : 'Draft'}
+              </span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 text-xs text-[#567364] pt-1">
+              <div>
+                <span class="text-[#567364] block text-[10px]">Take Home Pay (THP):</span>
+                <span class="font-mono font-bold text-[#0D6840] text-sm">Rp ${thp.toLocaleString('id-ID')}</span>
+              </div>
+              <div>
+                <span class="text-[#567364] block text-[10px]">Total Potongan:</span>
+                <span class="font-mono text-rose-600 font-bold">-Rp ${potongan.toLocaleString('id-ID')}</span>
+              </div>
+            </div>
+
+            <div class="pt-2 border-t border-[#E8F4EC] flex items-center justify-between gap-2">
+              <button type="button" onclick="openEditDeductionsModal('${emp.id}')" class="px-3 py-1.5 bg-[#F4F9F5] text-[#13231B] border border-[#D5E7DC] rounded-xl text-xs font-bold cursor-pointer">
+                Edit Potongan
+              </button>
+              
+              <div class="flex items-center gap-1.5">
+                ${!isPublished ? `
+                  <button type="button" onclick="publishSinglePayroll('${emp.id}', '${emp.nama}')" class="px-3 py-1.5 bg-[#0D6840] text-white rounded-xl text-xs font-bold cursor-pointer">
+                    Terbitkan Slip
+                  </button>
+                ` : `
+                  <button type="button" onclick="openPayslipModalById('${emp.id}', 'Oktober 2026')" class="px-3 py-1.5 bg-[#E8F4EC] text-[#0D6840] rounded-xl text-xs font-bold border border-[#D5E7DC] cursor-pointer">
+                    Lihat Slip (A4)
+                  </button>
+                `}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('total-gaji-pokok').textContent = `Rp ${sumPokok.toLocaleString('id-ID')}`;
+      document.getElementById('total-tunjangan').textContent = `+Rp ${sumTunjangan.toLocaleString('id-ID')}`;
+      document.getElementById('total-potongan').textContent = `-Rp ${sumPotongan.toLocaleString('id-ID')}`;
+      document.getElementById('total-thp').textContent = `Rp ${(sumPokok + sumTunjangan - sumPotongan).toLocaleString('id-ID')}`;
+    }
+
+    // =========================================================
+    // MODAL EDIT & TAMBAH POTONGAN DINAMIS PER KARYAWAN
+    // =========================================================
+    window.openEditDeductionsModal = function(empId) {
+      if (isPayrollLocked()) {
+        showToast('Payroll sedang dikunci! Klik tombol "Buka Kunci Payroll" di atas jika Anda ingin mengubah potongan.', 'error');
+        return;
+      }
+
+      // Cari pegawai defensif
+      let emp = employees.find(e => e.id === empId);
+      if (!emp) {
+        employees = getLocalEmployees();
+        emp = employees.find(e => e.id === empId) || employees[0];
+      }
+      if (!emp) {
+        showToast('Data pegawai tidak ditemukan.', 'error');
+        return;
+      }
+
+      document.getElementById('edit-emp-id').value = emp.id;
+      document.getElementById('modal-edit-subtitle').textContent = `Karyawan: ${emp.nama} (${emp.id}) - ${emp.jabatan}`;
+
+      const customMap = getPayrollCustomData();
+      const custom = customMap[emp.id] || null;
+
+      const gajiPokok = custom ? custom.gajiPokok : (emp.gajiPokok || 10000000);
+      const tunjangan = custom ? custom.tunjangan : (emp.tunjangan || Math.round(gajiPokok * 0.2));
+
+      document.getElementById('edit-gaji-pokok').value = gajiPokok;
+      document.getElementById('edit-tunjangan').value = tunjangan;
+
+      let items = [];
+      if (custom && custom.potonganItems && custom.potonganItems.length > 0) {
+        items = custom.potonganItems;
+      } else {
+        const defaultPotongan = emp.potongan || Math.round(gajiPokok * 0.03);
+        items = [
+          { nama: 'BPJS Ketenagakerjaan (JHT + JP)', nominal: Math.round(defaultPotongan * 0.45) },
+          { nama: 'BPJS Kesehatan (1%)', nominal: Math.round(defaultPotongan * 0.25) },
+          { nama: 'PPh 21 (Pajak Penghasilan)', nominal: Math.round(defaultPotongan * 0.30) }
+        ];
+      }
+
+      renderDeductionInputRows(items);
+      recalcModalTHP();
+
+      // Buka Modal secara eksplisit
+      const modal = document.getElementById('modal-edit-deductions');
+      if (modal) {
+        modal.style.display = 'flex';
+        modal.classList.remove('hidden');
+      }
+    };
+
+    window.closeEditDeductionsModal = function() {
+      const modal = document.getElementById('modal-edit-deductions');
+      if (modal) {
+        modal.style.display = 'none';
+        modal.classList.add('hidden');
+      }
+    };
+
+    function renderDeductionInputRows(items) {
+      const container = document.getElementById('deductions-container');
+      container.innerHTML = items.map((it, idx) => `
+        <div class="flex items-center gap-2 deduction-row">
+          <input type="text" value="${it.nama}" placeholder="Nama Potongan (mis. Kasbon)" class="flex-1 px-3 py-1.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-xs font-semibold text-[#13231B] ded-name">
+          <div class="relative w-36">
+            <span class="absolute left-2.5 top-1.5 text-xs text-[#567364]">Rp</span>
+            <input type="number" value="${it.nominal}" oninput="recalcModalTHP()" step="10000" class="w-full pl-8 pr-2.5 py-1.5 bg-white border border-[#D5E7DC] rounded-xl font-mono text-xs font-bold text-rose-600 ded-nominal">
+          </div>
+          <button type="button" onclick="removeDeductionRow(this)" class="p-1.5 text-[#567364] hover:text-rose-600 rounded-lg hover:bg-rose-50" title="Hapus Potongan Ini">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    // Tambah Baris Potongan Baru
+    window.addNewDeductionRow = function() {
+      const container = document.getElementById('deductions-container');
+      const div = document.createElement('div');
+      div.className = 'flex items-center gap-2 deduction-row animate-in fade-in';
+      div.innerHTML = `
+        <input type="text" placeholder="Potongan Baru (mis. Kasbon / Denda)" class="flex-1 px-3 py-1.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-xs font-semibold text-[#13231B] ded-name" autofocus>
+        <div class="relative w-36">
+          <span class="absolute left-2.5 top-1.5 text-xs text-[#567364]">Rp</span>
+          <input type="number" value="100000" oninput="recalcModalTHP()" step="10000" class="w-full pl-8 pr-2.5 py-1.5 bg-white border border-[#D5E7DC] rounded-xl font-mono text-xs font-bold text-rose-600 ded-nominal">
+        </div>
+        <button type="button" onclick="removeDeductionRow(this)" class="p-1.5 text-[#567364] hover:text-rose-600 rounded-lg hover:bg-rose-50" title="Hapus Potongan Ini">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+        </button>
+      `;
+      container.appendChild(div);
+      recalcModalTHP();
+    };
+
+    window.removeDeductionRow = function(btn) {
+      const row = btn.closest('.deduction-row');
+      if (row) {
+        row.remove();
+        recalcModalTHP();
+      }
+    };
+
+    window.recalcModalTHP = function() {
+      const gajiPokok = parseInt(document.getElementById('edit-gaji-pokok').value, 10) || 0;
+      const tunjangan = parseInt(document.getElementById('edit-tunjangan').value, 10) || 0;
+      
+      let sumDeduction = 0;
+      document.querySelectorAll('.ded-nominal').forEach(inp => {
+        sumDeduction += (parseInt(inp.value, 10) || 0);
+      });
+
+      const thp = gajiPokok + tunjangan - sumDeduction;
+      document.getElementById('modal-live-thp').textContent = `Rp ${thp.toLocaleString('id-ID')}`;
+    };
+
+    window.saveEmployeeDeductions = function() {
+      const empId = document.getElementById('edit-emp-id').value;
+      const gajiPokok = parseInt(document.getElementById('edit-gaji-pokok').value, 10) || 0;
+      const tunjangan = parseInt(document.getElementById('edit-tunjangan').value, 10) || 0;
+
+      const items = [];
+      const rows = document.querySelectorAll('.deduction-row');
+      rows.forEach(r => {
+        const nama = r.querySelector('.ded-name').value.trim() || 'Potongan Lainnya';
+        const nominal = parseInt(r.querySelector('.ded-nominal').value, 10) || 0;
+        items.push({ nama, nominal });
+      });
+
+      const customMap = getPayrollCustomData();
+      customMap[empId] = {
+        gajiPokok,
+        tunjangan,
+        potonganItems: items
+      };
+
+      savePayrollCustomData(customMap);
+      renderPayrollTable(employees);
+      closeEditDeductionsModal();
+      showToast('Komponen gaji & potongan karyawan berhasil diperbarui!', 'success');
+    };
+
+    // Modal Import CSV Payroll
+    window.openImportCsvPayrollModal = function() {
+      if (isPayrollLocked()) {
+        showToast('Payroll terkunci! Tidak dapat mengimpor CSV.', 'error');
+        return;
+      }
+      document.getElementById('csv-payroll-filename').textContent = 'Maksimal 5MB, format CSV UTF-8';
+      document.getElementById('btn-import-payroll').disabled = true;
+      document.getElementById('modal-import-csv-payroll').classList.remove('hidden');
+    };
+
+    window.closeImportCsvPayrollModal = function() {
+      document.getElementById('modal-import-csv-payroll').classList.add('hidden');
+    };
+
+    window.handlePayrollCsv = function(input) {
+      if (input.files && input.files[0]) {
+        document.getElementById('csv-payroll-filename').textContent = `Berkas: ${input.files[0].name}`;
+        document.getElementById('btn-import-payroll').disabled = false;
+      }
+    };
+
+    window.executeImportPayroll = function() {
+      showToast('Penyesuaian lembur dan insentif CSV berhasil diterapkan ke tabel kalkulasi!', 'success');
+      closeImportCsvPayrollModal();
+    };
+  </script>
+</body>
+</html>

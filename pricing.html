@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paket Langganan - Upajiwa Enterprise</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#E8F4EC] text-[#334D40] min-h-screen flex">
+
+  <!-- Mobile Drawer Container -->
+  <div id="mobile-drawer"></div>
+
+  <!-- Desktop Floating Sidebar (Deep Emerald #0D6840) -->
+  <aside id="desktop-sidebar" class="hidden md:block w-64 flex-shrink-0 min-h-screen sticky top-0"></aside>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col min-w-0 min-h-screen">
+    <!-- Topbar (Floating Emerald Bar) -->
+    <header id="topbar"></header>
+
+    <!-- Page Content Container -->
+    <main class="flex-1 px-4 sm:px-6 lg:px-8 py-6 max-w-7xl w-full mx-auto space-y-8">
+
+      <!-- Header Section -->
+      <div class="text-center max-w-3xl mx-auto space-y-2">
+        <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#DDF2E4] text-[#0D6840] text-xs font-bold border border-[#0D6840]/20">
+          Transparan & Tanpa Biaya Tersembunyi
+        </span>
+        <h1 class="font-heading font-black text-2xl sm:text-4xl text-[#13231B] tracking-tight">
+          Investasi Terjangkau untuk Pertumbuhan Bisnis Anda
+        </h1>
+        <p class="text-xs sm:text-sm text-[#567364]">
+          Pilih paket langganan yang fleksibel sesuai skala perusahaan Anda. Nikmati seluruh fitur payroll dan presensi modern tanpa komitmen jangka panjang yang rumit.
+        </p>
+      </div>
+
+      <!-- Pricing Cards Grid: HANYA PRO & ENTERPRISE (Starter Dihapus) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
+        <!-- Paket Pro (Paling Populer) -->
+        <div class="bg-white rounded-3xl p-6 sm:p-8 border-2 border-[#0D6840] shadow-xl relative overflow-hidden flex flex-col justify-between">
+          <div class="absolute top-0 right-0 bg-[#0D6840] text-white text-[11px] font-bold px-4 py-1.5 rounded-bl-2xl tracking-wider uppercase">
+            Paling Populer
+          </div>
+
+          <div>
+            <div class="flex items-center gap-2 mb-2">
+              <span class="w-3 h-3 rounded-full bg-[#0D6840]"></span>
+              <h3 class="font-heading font-black text-2xl text-[#13231B]">Paket Pro</h3>
+            </div>
+            <p class="text-xs text-[#567364] mb-6">Solusi komprehensif bagi perusahaan yang membutuhkan otomasi HRIS & Payroll penuh tanpa batasan fitur.</p>
+
+            <!-- Price Tag: Rp 12.500 / Karyawan / Bulan -->
+            <div class="mb-6 p-5 bg-[#E8F4EC] rounded-2xl border border-[#D5E7DC]">
+              <div class="flex items-baseline gap-1">
+                <span class="text-[#567364] font-bold text-sm">Rp</span>
+                <span class="font-heading font-black text-4xl sm:text-5xl text-[#0D6840] font-mono">12.500</span>
+                <span class="text-xs text-[#567364] font-bold">/ karyawan / bulan</span>
+              </div>
+              <p class="text-[11px] text-[#567364] mt-1.5">Ditagih bulanan atau tahunan (diskon 15% untuk bayar tahunan)</p>
+            </div>
+
+            <!-- Fitur Utama -->
+            <ul class="space-y-3.5 text-xs sm:text-sm text-[#334D40] mb-8">
+              <li class="flex items-center gap-3">
+                <div class="w-5 h-5 rounded-full bg-[#DDF2E4] text-[#0D6840] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <span><strong>Jumlah Karyawan Fleksibel</strong> (skala dinamis)</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <div class="w-5 h-5 rounded-full bg-[#DDF2E4] text-[#0D6840] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <span><strong>Otomasi Kalkulasi Payroll</strong> (Gaji, PPh 21, BPJS TK & Kes)</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <div class="w-5 h-5 rounded-full bg-[#DDF2E4] text-[#0D6840] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <span><strong>Slip Gaji Digital Standar Kertas A4</strong> (Print & PDF)</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <div class="w-5 h-5 rounded-full bg-[#DDF2E4] text-[#0D6840] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <span><strong>Portal ESS Karyawan Mandiri</strong> (Riwayat Presensi & Profil)</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <div class="w-5 h-5 rounded-full bg-[#DDF2E4] text-[#0D6840] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <span><strong>Laporan Eksekutif & Export Excel</strong> (Ber-Freeze Panes)</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <div class="w-5 h-5 rounded-full bg-[#DDF2E4] text-[#0D6840] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <span><strong>Import CSV Terpadu</strong> (Pegawai, Presensi, Payroll)</span>
+              </li>
+            </ul>
+          </div>
+
+          <button onclick="handleSubscribePro()" class="w-full py-3.5 bg-[#0D6840] hover:bg-[#094F30] text-white font-black text-sm rounded-2xl transition-all shadow-lg shadow-[#0D6840]/25 text-center">
+            Pilih Paket Pro Sekarang
+          </button>
+        </div>
+
+        <!-- Paket Enterprise -->
+        <div class="bg-white rounded-3xl p-6 sm:p-8 border border-[#D5E7DC] shadow-xs flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-2 mb-2">
+              <span class="w-3 h-3 rounded-full bg-[#567364]"></span>
+              <h3 class="font-heading font-black text-2xl text-[#13231B]">Paket Enterprise</h3>
+            </div>
+            <p class="text-xs text-[#567364] mb-6">Disesuaikan khusus untuk korporasi besar dengan kebutuhan kustomisasi, kepatuhan ketat, dan integrasi API mendalam.</p>
+
+            <!-- Price Tag -->
+            <div class="mb-6 p-5 bg-[#F4F9F5] rounded-2xl border border-[#D5E7DC]">
+              <div class="flex items-baseline gap-1">
+                <span class="font-heading font-black text-4xl text-[#13231B]">Kustom</span>
+              </div>
+              <p class="text-[11px] text-[#567364] mt-1.5">SLA 99.99% & Dedicated Cloud Infrastructure</p>
+            </div>
+
+            <!-- Fitur Tambahan Enterprise -->
+            <ul class="space-y-3.5 text-xs sm:text-sm text-[#334D40] mb-8">
+              <li class="flex items-center gap-3">
+                <div class="w-5 h-5 rounded-full bg-[#DDF2E4] text-[#0D6840] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <span>Semua fitur yang ada pada Paket Pro</span>
+              </li>
+              <li class="flex items-center gap-3">
+                <div class="w-5 h-5 rounded-full bg-[#DDF2E4] text-[#0D6840] flex items-center justify-center flex-shrink-0">
+                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <span><strong>Segera Hadir</strong></span>
+              </li>
+            </ul>
+          </div>
+
+          <button onclick="handleContactSales()" class="w-full py-3.5 border-2 border-[#D5E7DC] hover:border-[#0D6840] text-[#13231B] hover:text-[#0D6840] font-black text-sm rounded-2xl transition-all text-center bg-white">
+            Konsultasi dengan Tim Sales
+          </button>
+        </div>
+      </div>
+
+      <!-- Interactive Cost Simulator -->
+      <div class="bg-white rounded-3xl p-6 sm:p-8 border border-[#D5E7DC] shadow-xs max-w-4xl mx-auto">
+        <h3 class="font-heading font-black text-lg text-[#13231B] mb-2">Simulasi Biaya Langganan Paket Pro</h3>
+        <p class="text-xs text-[#567364] mb-6">Geser jumlah karyawan perusahaan Anda untuk melihat estimasi investasi bulanan:</p>
+
+        <div class="space-y-4">
+          <div class="flex items-center justify-between text-xs sm:text-sm font-bold">
+            <span class="text-[#13231B]">Jumlah Karyawan:</span>
+            <span class="text-[#0D6840] font-black font-mono text-base px-3 py-1 bg-[#DDF2E4] rounded-xl" id="slider-emp-count">20 Karyawan</span>
+          </div>
+          <input type="range" id="emp-slider" min="5" max="300" value="20" step="5" oninput="calculatePrice(this.value)" class="w-full accent-[#0D6840] cursor-pointer">
+          <div class="flex justify-between text-[11px] text-[#567364] font-medium">
+            <span>5 Orang</span>
+            <span>150 Orang</span>
+            <span>300 Orang</span>
+          </div>
+
+          <div class="pt-4 border-t border-[#E8F4EC] flex items-center justify-between">
+            <span class="text-xs font-semibold text-[#567364]">Estimasi Tagihan Bulanan:</span>
+            <span class="font-heading font-black text-2xl sm:text-3xl text-[#0D6840] font-mono" id="slider-total-price">Rp 250.000 / bln</span>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="mock-data.js"></script>
+  <script src="layout.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initAppShell('pricing');
+    });
+
+    function calculatePrice(count) {
+      const perEmp = 12500;
+      const total = count * perEmp;
+      document.getElementById('slider-emp-count').textContent = `${count} Karyawan`;
+      document.getElementById('slider-total-price').textContent = `Rp ${total.toLocaleString('id-ID')} / bln`;
+    }
+
+    function handleSubscribePro() {
+      showToast('Terima kasih! Anda telah memilih Paket Pro Rp 12.500/karyawan. Menuju gateway aktivasi...', 'success');
+    }
+
+    function handleContactSales() {
+      showToast('Permintaan konsultasi Enterprise Anda telah diterima oleh tim Upajiwa!', 'success');
+    }
+  </script>
+</body>
+</html>
