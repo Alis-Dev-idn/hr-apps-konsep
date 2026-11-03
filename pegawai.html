@@ -145,6 +145,27 @@
           <label class="block font-bold text-[#13231B] mb-1">Email Perusahaan</label>
           <input type="email" id="emp-email" required class="w-full px-3.5 py-2.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-[#13231B] focus:outline-none focus:border-[#0D6840]">
         </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-[#13231B] mb-1">Nama Bank</label>
+            <select id="emp-bank-name" class="w-full px-3.5 py-2.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-[#13231B] focus:outline-none focus:border-[#0D6840]">
+              <option value="Bank Mandiri">Bank Mandiri</option>
+              <option value="BCA">BCA</option>
+              <option value="BNI">BNI</option>
+              <option value="BRI">BRI</option>
+              <option value="Bank Syariah Indonesia (BSI)">BSI</option>
+              <option value="CIMB Niaga">CIMB Niaga</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-[#13231B] mb-1">Nomor Rekening</label>
+            <input type="text" id="emp-bank-number" placeholder="1230098765432" required class="w-full px-3.5 py-2.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-[#13231B] focus:outline-none focus:border-[#0D6840] font-mono">
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-[#13231B] mb-1">NPWP (Nomor Pokok Wajib Pajak)</label>
+          <input type="text" id="emp-npwp" placeholder="01.345.678.9-012.000" required class="w-full px-3.5 py-2.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-[#13231B] focus:outline-none focus:border-[#0D6840] font-mono">
+        </div>
 
         <div class="pt-4 border-t border-[#D5E7DC] flex justify-end gap-2">
           <button type="button" onclick="closeEmployeeModal()" class="px-4 py-2 border border-[#D5E7DC] rounded-xl text-[#334D40] hover:bg-[#E8F4EC] font-semibold">Batal</button>
@@ -248,18 +269,13 @@
               <span class="w-1.5 h-1.5 rounded-full bg-[#0D6840]"></span> Aktif
             </span>
           </td>
-          <td class="py-3.5 px-5 text-right">
-            <div class="flex items-center justify-end gap-1.5">
-              <a href="detail-pegawai.html?id=${emp.id}" class="px-3 py-1.5 bg-[#E8F4EC] hover:bg-[#DDF2E4] text-[#0D6840] rounded-xl text-xs font-bold transition-colors border border-[#D5E7DC]" title="Buka Detail Penuh & Riwayat 12 Bulan">
-                Detail
-              </a>
-              <button onclick="editEmployee('${emp.id}')" class="p-1.5 text-[#567364] hover:text-[#D97706] rounded-xl hover:bg-[#E8F4EC]" title="Edit Data">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-              </button>
-              <button onclick="confirmDeleteEmployee('${emp.id}', '${emp.nama}')" class="p-1.5 text-[#567364] hover:text-rose-600 rounded-xl hover:bg-rose-50" title="Hapus Pegawai">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-              </button>
-            </div>
+          <td class="py-3.5 px-5 text-right whitespace-nowrap">
+            <a href="detail-pegawai.html?id=${emp.id}" class="px-3.5 py-1.5 bg-[#E8F4EC] hover:bg-[#DDF2E4] text-[#0D6840] rounded-xl text-xs font-bold transition-colors border border-[#D5E7DC] inline-flex items-center gap-1.5 shadow-2xs" title="Buka Detail Penuh & Riwayat">
+              <span>Lihat Detail</span>
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </a>
           </td>
         </tr>
       `).join('');
@@ -295,16 +311,10 @@
             </div>
           </div>
 
-          <div class="flex items-center justify-end gap-2 pt-2 border-t border-[#E8F4EC]">
-            <a href="detail-pegawai.html?id=${emp.id}" class="px-3.5 py-1.5 bg-[#E8F4EC] text-[#0D6840] text-xs font-bold rounded-xl flex items-center gap-1 border border-[#D5E7DC]">
-              <span>Buka Detail & Riwayat</span> &rarr;
+          <div class="flex items-center justify-end pt-2 border-t border-[#E8F4EC]">
+            <a href="detail-pegawai.html?id=${emp.id}" class="w-full sm:w-auto px-4 py-2 bg-[#0D6840] hover:bg-[#094F30] text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-colors shadow-2xs">
+              <span>Lihat Detail Pegawai</span> &rarr;
             </a>
-            <button onclick="editEmployee('${emp.id}')" class="p-1.5 border border-[#D5E7DC] rounded-xl text-[#567364]">
-              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-            </button>
-            <button onclick="confirmDeleteEmployee('${emp.id}', '${emp.nama}')" class="p-1.5 border border-[#D5E7DC] text-rose-500 rounded-xl hover:bg-rose-50">
-              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-            </button>
           </div>
         </div>
       `).join('');
@@ -329,6 +339,8 @@
       document.getElementById('emp-id').readOnly = false;
       document.getElementById('form-employee').reset();
       document.getElementById('emp-salary').value = '10000000';
+      document.getElementById('emp-bank-number').value = '';
+      document.getElementById('emp-npwp').value = '';
       document.getElementById('modal-employee').classList.remove('hidden');
     }
 
@@ -345,6 +357,19 @@
       document.getElementById('emp-role').value = emp.jabatan;
       document.getElementById('emp-salary').value = emp.gajiPokok;
       document.getElementById('emp-email').value = `${emp.nama.toLowerCase().replace(/\s+/g, '.')}@pt-maju.co.id`;
+      
+      if (emp.rekening) {
+        const parts = emp.rekening.split(' - ');
+        if (parts.length >= 2) {
+          document.getElementById('emp-bank-name').value = parts[0];
+          document.getElementById('emp-bank-number').value = parts.slice(1).join(' - ');
+        } else {
+          document.getElementById('emp-bank-number').value = emp.rekening;
+        }
+      } else {
+        document.getElementById('emp-bank-number').value = '';
+      }
+      document.getElementById('emp-npwp').value = emp.npwp || '';
 
       document.getElementById('modal-employee').classList.remove('hidden');
     }
@@ -361,11 +386,25 @@
       const departemen = document.getElementById('emp-dept').value;
       const jabatan = document.getElementById('emp-role').value.trim();
       const gajiPokok = parseInt(document.getElementById('emp-salary').value, 10);
+      const email = document.getElementById('emp-email').value.trim();
+      const bankName = document.getElementById('emp-bank-name').value;
+      const bankNumber = document.getElementById('emp-bank-number').value.trim();
+      const npwp = document.getElementById('emp-npwp').value.trim();
+      const rekening = `${bankName} - ${bankNumber}`;
 
       if (editId) {
         const index = employeesData.findIndex(item => item.id === editId);
         if (index !== -1) {
-          employeesData[index] = { ...employeesData[index], nama, departemen, jabatan, gajiPokok };
+          employeesData[index] = { 
+            ...employeesData[index], 
+            nama, 
+            departemen, 
+            jabatan, 
+            gajiPokok,
+            email,
+            rekening,
+            npwp
+          };
           showToast(`Data pegawai ${nama} berhasil diperbarui!`, 'success');
         }
       } else {
@@ -375,6 +414,9 @@
           departemen,
           jabatan,
           gajiPokok,
+          email,
+          rekening,
+          npwp,
           tunjangan: Math.round(gajiPokok * 0.2),
           potongan: Math.round(gajiPokok * 0.03)
         };

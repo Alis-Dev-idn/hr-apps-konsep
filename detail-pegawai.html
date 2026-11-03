@@ -33,13 +33,13 @@
         </a>
 
         <div class="flex items-center gap-2">
-          <button onclick="handleEditCurrentEmp()" class="px-3.5 py-2 bg-white hover:bg-[#DDF2E4] text-xs sm:text-sm font-bold rounded-2xl text-[#0D6840] transition-colors flex items-center gap-1.5 border border-[#D5E7DC] shadow-xs">
+          <button onclick="handleEditCurrentEmp()" class="px-3.5 py-2 bg-white hover:bg-[#DDF2E4] text-xs sm:text-sm font-bold rounded-2xl text-[#0D6840] transition-colors flex items-center gap-1.5 border border-[#D5E7DC] shadow-xs cursor-pointer">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
             </svg>
-            <span>Edit Profil</span>
+            <span>Edit Pegawai</span>
           </button>
-          <button onclick="handleDeleteCurrentEmp()" class="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs sm:text-sm font-bold rounded-2xl transition-colors flex items-center gap-1.5 border border-rose-200">
+          <button onclick="handleDeleteCurrentEmp()" class="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs sm:text-sm font-bold rounded-2xl transition-colors flex items-center gap-1.5 border border-rose-200 cursor-pointer">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
             </svg>
@@ -72,7 +72,7 @@
           </div>
 
           <!-- Quick Action Preview Slip Terakhir -->
-          <button onclick="previewLatestSlip()" class="px-5 py-3 bg-[#0D6840] hover:bg-[#094F30] text-white rounded-2xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-md shadow-[#0D6840]/20">
+          <button onclick="previewLatestSlip()" class="px-5 py-3 bg-[#0D6840] hover:bg-[#094F30] text-white rounded-2xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-md shadow-[#0D6840]/20 cursor-pointer">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
             </svg>
@@ -89,13 +89,13 @@
           </div>
           <div>
             <span class="text-xs text-[#567364] uppercase tracking-wider block font-bold">Rekening Bank</span>
-            <span class="font-bold text-[#13231B] mt-0.5 block">Bank Mandiri</span>
-            <span class="text-[11px] text-[#567364] font-mono">No. Rek: 123-00-9876543-2</span>
+            <span id="hero-bank-name" class="font-bold text-[#13231B] mt-0.5 block">Bank Mandiri</span>
+            <span id="hero-bank-number" class="text-[11px] text-[#567364] font-mono">No. Rek: 123-00-9876543-2</span>
           </div>
           <div>
             <span class="text-xs text-[#567364] uppercase tracking-wider block font-bold">Perpajakan & BPJS</span>
-            <span class="font-bold text-[#13231B] mt-0.5 block">NPWP Terdaftar</span>
-            <span class="text-[11px] text-[#567364] font-mono">BPJS TK: 210899120938</span>
+            <span id="hero-npwp-status" class="font-bold text-[#13231B] mt-0.5 block">NPWP Terdaftar</span>
+            <span id="hero-npwp-number" class="text-[11px] text-[#567364] font-mono">NPWP: 01.345.678.9-012.000</span>
           </div>
           <div>
             <span class="text-xs text-[#567364] uppercase tracking-wider block font-bold">Tanggal Bergabung</span>
@@ -204,6 +204,84 @@
     </main>
   </div>
 
+  <!-- Modal Edit Pegawai Lengkap -->
+  <div id="modal-edit-employee-detail" class="fixed inset-0 bg-[#13231B]/75 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl border border-[#D5E7DC] my-8 animate-in fade-in zoom-in-95">
+      <div class="flex items-center justify-between pb-3 border-b border-[#D5E7DC] mb-4">
+        <div>
+          <h3 class="font-heading font-black text-lg text-[#13231B]">Edit Data Pegawai</h3>
+          <p class="text-xs text-[#567364]" id="modal-edit-detail-sub">Perbarui data profil, jabatan, rekening, dan perpajakan.</p>
+        </div>
+        <button onclick="closeEditEmployeeDetailModal()" class="text-[#567364] hover:text-[#13231B] p-1.5 rounded-xl hover:bg-[#E8F4EC] cursor-pointer">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form id="form-edit-employee-detail" onsubmit="handleSaveEditEmployee(event)" class="space-y-4 text-xs sm:text-sm">
+        <div>
+          <label class="block font-bold text-[#13231B] mb-1">Nama Lengkap</label>
+          <input type="text" id="edit-detail-name" required class="w-full px-3.5 py-2.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-[#13231B] focus:outline-none focus:border-[#0D6840]">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-[#13231B] mb-1">NIP (Nomor Induk)</label>
+            <input type="text" id="edit-detail-id" readonly class="w-full px-3.5 py-2.5 bg-slate-100 border border-[#D5E7DC] rounded-xl text-slate-500 font-mono cursor-not-allowed">
+          </div>
+          <div>
+            <label class="block font-bold text-[#13231B] mb-1">Departemen</label>
+            <select id="edit-detail-dept" required class="w-full px-3.5 py-2.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-[#13231B] focus:outline-none focus:border-[#0D6840]">
+              <option value="Teknologi">Teknologi</option>
+              <option value="Finance & Accounting">Finance & Accounting</option>
+              <option value="Human Resources">Human Resources</option>
+              <option value="Marketing & Sales">Marketing & Sales</option>
+              <option value="Operasional">Operasional</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-[#13231B] mb-1">Jabatan</label>
+            <input type="text" id="edit-detail-role" required class="w-full px-3.5 py-2.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-[#13231B] focus:outline-none focus:border-[#0D6840]">
+          </div>
+          <div>
+            <label class="block font-bold text-[#13231B] mb-1">Gaji Pokok (Rp)</label>
+            <input type="number" id="edit-detail-salary" required min="1000000" step="500000" class="w-full px-3.5 py-2.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-[#13231B] focus:outline-none focus:border-[#0D6840] font-mono">
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-[#13231B] mb-1">Email Perusahaan</label>
+          <input type="email" id="edit-detail-email" required class="w-full px-3.5 py-2.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-[#13231B] focus:outline-none focus:border-[#0D6840]">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-[#13231B] mb-1">Nama Bank</label>
+            <select id="edit-detail-bank-name" class="w-full px-3.5 py-2.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-[#13231B] focus:outline-none focus:border-[#0D6840]">
+              <option value="Bank Mandiri">Bank Mandiri</option>
+              <option value="BCA">BCA</option>
+              <option value="BNI">BNI</option>
+              <option value="BRI">BRI</option>
+              <option value="Bank Syariah Indonesia (BSI)">BSI</option>
+              <option value="CIMB Niaga">CIMB Niaga</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-[#13231B] mb-1">Nomor Rekening</label>
+            <input type="text" id="edit-detail-bank-number" placeholder="123-00-9876543-2" required class="w-full px-3.5 py-2.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-[#13231B] focus:outline-none focus:border-[#0D6840] font-mono">
+          </div>
+        </div>
+        <div>
+          <label class="block font-bold text-[#13231B] mb-1">NPWP (Nomor Pokok Wajib Pajak)</label>
+          <input type="text" id="edit-detail-npwp" placeholder="01.345.678.9-012.000" required class="w-full px-3.5 py-2.5 bg-[#F4F9F5] border border-[#D5E7DC] rounded-xl text-[#13231B] focus:outline-none focus:border-[#0D6840] font-mono">
+        </div>
+
+        <div class="pt-4 border-t border-[#D5E7DC] flex justify-end gap-2">
+          <button type="button" onclick="closeEditEmployeeDetailModal()" class="px-4 py-2 border border-[#D5E7DC] rounded-xl text-[#334D40] hover:bg-[#E8F4EC] font-semibold cursor-pointer">Batal</button>
+          <button type="submit" class="px-4 py-2 bg-[#0D6840] hover:bg-[#094F30] text-white rounded-xl font-bold shadow-md cursor-pointer">Simpan Perubahan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script src="mock-data.js"></script>
   <script src="layout.js"></script>
   <script>
@@ -227,9 +305,17 @@
       document.getElementById('hero-name').textContent = emp.nama;
       document.getElementById('hero-role').textContent = `${emp.jabatan} • Divisi ${emp.departemen}`;
       document.getElementById('hero-nip').textContent = `NIP: ${emp.id}`;
-      document.getElementById('hero-email').textContent = `${emp.nama.toLowerCase().replace(/\s+/g, '.')}@pt-maju.co.id`;
+      document.getElementById('hero-email').textContent = emp.email || `${emp.nama.toLowerCase().replace(/\s+/g, '.')}@pt-maju.co.id`;
       document.getElementById('hero-salary').textContent = `Rp ${emp.gajiPokok.toLocaleString('id-ID')}`;
       document.getElementById('hero-avatar').textContent = emp.nama.split(' ').map(n=>n[0]).join('').substring(0,2);
+      
+      const rekeningStr = emp.rekening || 'Bank Mandiri - 123-00-9876543-2';
+      const rekParts = rekeningStr.split(' - ');
+      document.getElementById('hero-bank-name').textContent = rekParts[0] || 'Bank Mandiri';
+      document.getElementById('hero-bank-number').textContent = `No. Rek: ${rekParts.slice(1).join(' - ') || '123-00-9876543-2'}`;
+      
+      const npwpVal = emp.npwp || '01.345.678.9-012.000';
+      document.getElementById('hero-npwp-number').textContent = `NPWP: ${npwpVal}`;
     }
 
     function switchDetailTab(tab) {
@@ -405,7 +491,67 @@
     }
 
     function handleEditCurrentEmp() {
-      window.location.href = `pegawai.html`;
+      if (!currentEmp) return;
+      document.getElementById('edit-detail-id').value = currentEmp.id;
+      document.getElementById('edit-detail-name').value = currentEmp.nama;
+      document.getElementById('edit-detail-dept').value = currentEmp.departemen;
+      document.getElementById('edit-detail-role').value = currentEmp.jabatan;
+      document.getElementById('edit-detail-salary').value = currentEmp.gajiPokok || 15000000;
+      document.getElementById('edit-detail-email').value = currentEmp.email || `${currentEmp.nama.toLowerCase().replace(/\s+/g, '.')}@pt-maju.co.id`;
+      
+      const rekeningStr = currentEmp.rekening || '';
+      if (rekeningStr.includes(' - ')) {
+        const parts = rekeningStr.split(' - ');
+        document.getElementById('edit-detail-bank-name').value = parts[0] || 'Bank Mandiri';
+        document.getElementById('edit-detail-bank-number').value = parts.slice(1).join(' - ') || '';
+      } else {
+        document.getElementById('edit-detail-bank-number').value = rekeningStr;
+      }
+      document.getElementById('edit-detail-npwp').value = currentEmp.npwp || '01.345.678.9-012.000';
+
+      document.getElementById('modal-edit-employee-detail').classList.remove('hidden');
+    }
+
+    function closeEditEmployeeDetailModal() {
+      document.getElementById('modal-edit-employee-detail').classList.add('hidden');
+    }
+
+    function handleSaveEditEmployee(e) {
+      e.preventDefault();
+      if (!currentEmp) return;
+
+      const nama = document.getElementById('edit-detail-name').value.trim();
+      const departemen = document.getElementById('edit-detail-dept').value;
+      const jabatan = document.getElementById('edit-detail-role').value.trim();
+      const gajiPokok = parseInt(document.getElementById('edit-detail-salary').value, 10);
+      const email = document.getElementById('edit-detail-email').value.trim();
+      const bankName = document.getElementById('edit-detail-bank-name').value;
+      const bankNumber = document.getElementById('edit-detail-bank-number').value.trim();
+      const npwp = document.getElementById('edit-detail-npwp').value.trim();
+      const rekening = `${bankName} - ${bankNumber}`;
+
+      // Update objek currentEmp
+      currentEmp.nama = nama;
+      currentEmp.departemen = departemen;
+      currentEmp.jabatan = jabatan;
+      currentEmp.gajiPokok = gajiPokok;
+      currentEmp.email = email;
+      currentEmp.rekening = rekening;
+      currentEmp.npwp = npwp;
+
+      // Update penyimpanan lokal
+      let list = getLocalEmployees();
+      const idx = list.findIndex(e => e.id === currentEmp.id);
+      if (idx !== -1) {
+        list[idx] = { ...list[idx], nama, departemen, jabatan, gajiPokok, email, rekening, npwp };
+        saveLocalEmployees(list);
+      }
+
+      // Re-render UI
+      renderHeroDetails(currentEmp);
+      renderPayrollHistory(currentEmp);
+      closeEditEmployeeDetailModal();
+      showToast(`Data pegawai ${nama} berhasil diperbarui!`, 'success');
     }
 
     function handleDeleteCurrentEmp() {
