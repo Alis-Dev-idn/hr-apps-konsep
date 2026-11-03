@@ -384,25 +384,25 @@ function injectModalsContainer() {
     </div>
 
     <!-- Modal Slip Gaji Resmi Standar Kertas A4 (Print-Ready) -->
-    <div id="modal-slip-gaji" class="fixed inset-0 bg-[#13231B]/75 backdrop-blur-xs z-50 hidden overflow-y-auto p-4 sm:p-6 flex items-center justify-center">
-      <div class="bg-white rounded-3xl max-w-3xl w-full shadow-2xl border border-[#D5E7DC] my-8 overflow-hidden">
+    <div id="modal-slip-gaji" class="fixed inset-0 bg-[#13231B]/75 backdrop-blur-xs z-50 hidden overflow-y-auto p-2 sm:p-6 flex items-start justify-center">
+      <div class="bg-white rounded-2xl sm:rounded-3xl max-w-3xl w-full shadow-2xl border border-[#D5E7DC] my-3 sm:my-8 overflow-hidden relative">
         
-        <!-- Header Modal Slip (HANYA MUNCUL DI LAYAR, 100% DISEMBUNYIKAN SAAT PRINT) -->
-        <div class="flex items-center justify-between px-6 py-4 border-b border-[#D5E7DC] bg-[#E8F4EC] no-print">
-          <div class="flex items-center gap-2.5">
-            <div class="w-7 h-7 rounded-lg bg-[#0D6840] flex items-center justify-center p-1">
+        <!-- Header Modal Slip (Sticky di Layar, 100% Sembunyi Saat Print) -->
+        <div class="sticky top-0 z-20 flex items-center justify-between px-3.5 py-3 sm:px-6 sm:py-4 border-b border-[#D5E7DC] bg-[#E8F4EC] no-print shadow-xs">
+          <div class="flex items-center gap-2 sm:gap-2.5 min-w-0 pr-2">
+            <div class="w-7 h-7 rounded-lg bg-[#0D6840] flex items-center justify-center p-1 flex-shrink-0">
               <img src="assets/icon.png" class="w-full h-full object-contain">
             </div>
-            <span class="font-heading font-bold text-[#13231B] text-sm sm:text-base">Pratinjau Slip Gaji Resmi (Standar Kertas A4)</span>
+            <span class="font-heading font-bold text-[#13231B] text-xs sm:text-base truncate">Pratinjau Slip Gaji A4</span>
           </div>
-          <div class="flex items-center gap-2">
-            <button onclick="window.print()" class="px-4 py-2 bg-[#0D6840] hover:bg-[#094F30] text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors shadow-sm">
-              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+            <button onclick="window.print()" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-[#0D6840] hover:bg-[#094F30] text-white rounded-xl text-xs font-bold flex items-center gap-1 sm:gap-1.5 transition-colors shadow-sm">
+              <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
               </svg>
-              Cetak / Simpan PDF
+              <span>Cetak<span class="hidden sm:inline"> / Simpan PDF</span></span>
             </button>
-            <button onclick="closePayslipModal()" class="p-2 text-[#567364] hover:text-[#13231B] rounded-xl hover:bg-[#DDF2E4]">
+            <button onclick="closePayslipModal()" class="p-1.5 sm:p-2 text-[#567364] hover:text-[#13231B] rounded-xl hover:bg-[#DDF2E4]">
               <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
               </svg>
@@ -411,7 +411,7 @@ function injectModalsContainer() {
         </div>
 
         <!-- Printable Document Lembar Kertas A4 Utuh -->
-        <div id="printable-payslip" class="p-6 sm:p-10 bg-white text-[#13231B] text-sm">
+        <div id="printable-payslip" class="p-4 sm:p-10 bg-white text-[#13231B] text-xs sm:text-sm">
           <!-- Dynamic Slip Content Generated via openPayslipModalById -->
         </div>
       </div>
@@ -464,29 +464,31 @@ function openPayslipModalById(empId, monthLabel = 'Oktober 2026') {
 
   // Render HTML Slip Gaji Standar 1 Lembar A4
   printable.innerHTML = `
-    <!-- Header Dokumen Cetak -->
-    <div class="border-b-2 border-[#13231B] pb-4 mb-4 flex items-start justify-between">
+    <!-- Header Dokumen Cetak (Kop Surat) -->
+    <div class="print-row-header border-b-2 border-[#13231B] pb-3 sm:pb-4 mb-4 flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-0">
       <div>
-        <div class="flex items-center gap-2.5 mb-1">
-          <div class="w-8 h-8 rounded-lg bg-[#0D6840] flex items-center justify-center p-1">
+        <div class="flex items-center gap-2 sm:gap-2.5 mb-1">
+          <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#0D6840] flex items-center justify-center p-1 flex-shrink-0">
             <img src="assets/icon.png" class="w-full h-full object-contain">
           </div>
-          <span class="font-heading font-black text-xl text-[#13231B] tracking-tight">PT MAJU BERSAMA SEJAHTERA</span>
+          <span class="font-heading font-black text-base sm:text-xl text-[#13231B] tracking-tight">PT MAJU BERSAMA SEJAHTERA</span>
         </div>
-        <p class="text-xs text-[#567364]">Gedung Bursa Efek Indonesia Tower II Lt. 17, SCBD Jakarta Selatan</p>
-        <p class="text-xs text-[#567364]">NPWP: 01.345.678.9-012.000 | Telp: (021) 515-0888</p>
+        <p class="text-[11px] sm:text-xs text-[#567364]">Gedung Bursa Efek Indonesia Tower II Lt. 17, SCBD Jakarta Selatan</p>
+        <p class="text-[11px] sm:text-xs text-[#567364]">NPWP: 01.345.678.9-012.000 | Telp: (021) 515-0888</p>
       </div>
-      <div class="text-right">
-        <span class="inline-block px-3 py-1 bg-[#E8F4EC] border border-[#D5E7DC] font-heading font-bold text-xs uppercase tracking-wider text-[#0D6840] rounded-lg">
+      <div class="print-text-right text-left sm:text-right flex sm:block items-center justify-between sm:justify-start gap-2 pt-1 sm:pt-0 border-t sm:border-t-0 border-dashed border-[#D5E7DC]">
+        <span class="inline-block px-2.5 py-1 bg-[#E8F4EC] border border-[#D5E7DC] font-heading font-bold text-[10px] sm:text-xs uppercase tracking-wider text-[#0D6840] rounded-lg">
           SLIP GAJI KARYAWAN
         </span>
-        <p class="text-xs text-[#334D40] mt-1 font-medium">Periode: <strong class="text-[#13231B]">${monthLabel}</strong></p>
-        <p class="text-[11px] text-[#567364]">ID Slip: SLP-${emp.id}-202610</p>
+        <div class="text-right sm:text-right">
+          <p class="text-xs text-[#334D40] mt-0.5 sm:mt-1 font-medium">Periode: <strong class="text-[#13231B]">${monthLabel}</strong></p>
+          <p class="text-[10px] sm:text-[11px] text-[#567364]">ID Slip: SLP-${emp.id}-202610</p>
+        </div>
       </div>
     </div>
 
     <!-- Metadata Pegawai Grid -->
-    <div class="grid grid-cols-2 gap-4 bg-[#F4F9F5] p-3.5 rounded-2xl border border-[#D5E7DC] mb-5 text-xs">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 bg-[#F4F9F5] p-3 sm:p-3.5 rounded-2xl border border-[#D5E7DC] mb-4 sm:mb-5 text-xs">
       <div>
         <table class="w-full">
           <tr><td class="text-[#567364] py-0.5 w-24">Nomor Induk</td><td class="font-semibold text-[#13231B]">: ${emp.id}</td></tr>
@@ -503,10 +505,10 @@ function openPayslipModalById(empId, monthLabel = 'Oktober 2026') {
       </div>
     </div>
 
-    <!-- Rincian Penghasilan & Potongan 2 Kolom -->
-    <div class="grid grid-cols-2 gap-5 mb-5">
+    <!-- Rincian Penghasilan & Potongan 2 Kolom (1 Kolom di Mobile, 2 Kolom di Desktop & Print A4) -->
+    <div class="print-grid-2 grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-5 mb-4 sm:mb-5">
       <!-- Kolom Pendapatan -->
-      <div class="border border-[#D5E7DC] rounded-2xl p-4 bg-white flex flex-col justify-between">
+      <div class="border border-[#D5E7DC] rounded-2xl p-3.5 sm:p-4 bg-white flex flex-col justify-between">
         <div>
           <h4 class="font-heading font-bold text-xs uppercase tracking-wider text-[#0D6840] border-b border-[#D5E7DC] pb-2 mb-2 flex items-center justify-between">
             <span>A. Komponen Pendapatan</span>
@@ -527,14 +529,14 @@ function openPayslipModalById(empId, monthLabel = 'Oktober 2026') {
             </div>
           </div>
         </div>
-        <div class="border-t border-dashed border-[#D5E7DC] pt-2 flex justify-between font-bold text-[#13231B] mt-3">
+        <div class="border-t border-dashed border-[#D5E7DC] pt-2 flex justify-between font-bold text-[#13231B] mt-3 text-xs">
           <span>Total Pendapatan Kotor</span>
           <span class="font-mono text-[#0D6840]">Rp ${(gajiPokok + tunjangan).toLocaleString('id-ID')}</span>
         </div>
       </div>
 
       <!-- Kolom Potongan (Dinamis: Mendukung Potongan Tambahan) -->
-      <div class="border border-[#D5E7DC] rounded-2xl p-4 bg-white flex flex-col justify-between">
+      <div class="border border-[#D5E7DC] rounded-2xl p-3.5 sm:p-4 bg-white flex flex-col justify-between">
         <div>
           <h4 class="font-heading font-bold text-xs uppercase tracking-wider text-rose-800 border-b border-[#D5E7DC] pb-2 mb-2 flex items-center justify-between">
             <span>B. Komponen Potongan</span>
@@ -549,7 +551,7 @@ function openPayslipModalById(empId, monthLabel = 'Oktober 2026') {
             `).join('')}
           </div>
         </div>
-        <div class="border-t border-dashed border-[#D5E7DC] pt-2 flex justify-between font-bold text-[#13231B] mt-3">
+        <div class="border-t border-dashed border-[#D5E7DC] pt-2 flex justify-between font-bold text-[#13231B] mt-3 text-xs">
           <span>Total Potongan</span>
           <span class="font-mono text-rose-700">Rp ${totalPotongan.toLocaleString('id-ID')}</span>
         </div>
@@ -557,31 +559,31 @@ function openPayslipModalById(empId, monthLabel = 'Oktober 2026') {
     </div>
 
     <!-- Take Home Pay Card Highlight -->
-    <div class="bg-[#DDF2E4] border border-[#0D6840]/30 rounded-2xl p-4 flex items-center justify-between mb-6">
+    <div class="bg-[#DDF2E4] border border-[#0D6840]/30 rounded-2xl p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0 mb-5 sm:mb-6">
       <div>
         <span class="text-xs font-bold text-[#0D6840] uppercase tracking-wide">Penerimaan Bersih (Take Home Pay)</span>
-        <p class="text-[11px] text-[#4A6356] italic mt-0.5">Terbilang: #${terbilang(takeHomePay)} Rupiah#</p>
+        <p class="text-[10px] sm:text-[11px] text-[#4A6356] italic mt-0.5">Terbilang: #${terbilang(takeHomePay)} Rupiah#</p>
       </div>
-      <div class="text-right">
-        <span class="font-heading font-black text-2xl text-[#0D6840] font-mono tracking-tight">Rp ${takeHomePay.toLocaleString('id-ID')}</span>
+      <div class="text-left sm:text-right">
+        <span class="font-heading font-black text-xl sm:text-2xl text-[#0D6840] font-mono tracking-tight">Rp ${takeHomePay.toLocaleString('id-ID')}</span>
       </div>
     </div>
 
     <!-- Legal & Signature Footer -->
-    <div class="grid grid-cols-2 gap-8 text-center text-xs pt-3 border-t border-[#D5E7DC]">
+    <div class="grid grid-cols-2 gap-4 sm:gap-8 text-center text-[11px] sm:text-xs pt-3 border-t border-[#D5E7DC]">
       <div>
-        <p class="text-[#567364] mb-10">Penerima (Karyawan),</p>
-        <p class="font-bold text-[#13231B] border-b border-[#D5E7DC] pb-1 mx-8">${emp.nama}</p>
+        <p class="text-[#567364] mb-8 sm:mb-10">Penerima (Karyawan),</p>
+        <p class="font-bold text-[#13231B] border-b border-[#D5E7DC] pb-1 mx-2 sm:mx-8">${emp.nama}</p>
         <p class="text-[10px] text-[#567364] mt-1">NIP: ${emp.id}</p>
       </div>
       <div>
-        <p class="text-[#567364] mb-10">Jakarta, 28 ${monthLabel}<br>Finance & Payroll Department,</p>
-        <p class="font-bold text-[#13231B] border-b border-[#D5E7DC] pb-1 mx-8">Hendra Wijaya, S.E.</p>
+        <p class="text-[#567364] mb-8 sm:mb-10">Jakarta, 28 ${monthLabel}<br>Finance & Payroll Department,</p>
+        <p class="font-bold text-[#13231B] border-b border-[#D5E7DC] pb-1 mx-2 sm:mx-8">Hendra Wijaya, S.E.</p>
         <p class="text-[10px] text-[#567364] mt-1">HR & Finance Director</p>
       </div>
     </div>
     
-    <div class="mt-6 text-center text-[10px] text-[#567364] border-t border-dashed border-[#D5E7DC] pt-2">
+    <div class="mt-4 sm:mt-6 text-center text-[9px] sm:text-[10px] text-[#567364] border-t border-dashed border-[#D5E7DC] pt-2">
       Dokumen ini digenerate secara otomatis oleh sistem Upajiwa SaaS HRIS & Payroll. Sah tanpa tanda tangan basah bila diverifikasi melalui QR / Digital Hash.
     </div>
   `;
